@@ -1,6 +1,6 @@
 // packages/ui-web/src/features/chat/components/MessageBubble/MessageBubble.tsx (ACTUALIZADO)
 
-import React from "react";
+import React, { memo } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import type { ChatMessage } from "../../types";
@@ -9,7 +9,7 @@ interface MessageBubbleProps {
   message: ChatMessage;
 }
 
-export const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
+export const MessageBubble: React.FC<MessageBubbleProps> = memo(({ message }) => {
   const isUser = message.role === "user";
 
   return (
@@ -86,4 +86,4 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
       </div>
     </div>
   );
-};
+});

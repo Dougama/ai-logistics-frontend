@@ -1,6 +1,6 @@
 // packages/ui-web/src/features/chat/components/ChatWindow/ChatWindow.tsx (MIGRADO)
 
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, memo, useCallback } from "react";
 import { Container } from "@mantine/core";
 import { IconSparkles } from "@tabler/icons-react";
 import { MessageBubble } from "../MessageBubble";
@@ -13,7 +13,7 @@ interface ChatWindowProps {
   isReplying: boolean;
 }
 
-export const ChatWindow: React.FC<ChatWindowProps> = ({
+export const ChatWindow: React.FC<ChatWindowProps> = memo(({
   messages,
   onSendMessage,
   isReplying,
@@ -23,6 +23,15 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  const handleSuggestionClick = useCallback((suggestion: string) => {
+    const cleanSuggestion = suggestion.replace(/^[📦🚚📊🗺️💰⏰]\s/, "");
+    onSendMessage(cleanSuggestion);
+  }, [onSendMessage]);
+
+  const handleFeatureClick = useCallback((question: string) => {
+    onSendMessage(question);
+  }, [onSendMessage]);
 
   return (
     <div className="chat-window">
@@ -53,9 +62,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
                 <div className="chat-features">
                   <div
                     className="chat-feature"
-                    onClick={() =>
-                      onSendMessage("¿Cómo funciona el tiempo real?")
-                    }
+                    onClick={() => handleFeatureClick("¿Cómo funciona el tiempo real?")}
                   >
                     <span className="chat-feature__icon">⚡</span>
                     <h3 className="chat-feature__title">Tiempo Real</h3>
@@ -66,9 +73,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
 
                   <div
                     className="chat-feature"
-                    onClick={() =>
-                      onSendMessage("¿Qué tan precisos son los datos?")
-                    }
+                    onClick={() => handleFeatureClick("¿Qué tan precisos son los datos?")}
                   >
                     <span className="chat-feature__icon">🎯</span>
                     <h3 className="chat-feature__title">Precisión</h3>
@@ -96,11 +101,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
                       <div
                         key={index}
                         className="chat-suggestion"
-                        onClick={() =>
-                          onSendMessage(
-                            suggestion.replace(/^[📦🚚📊🗺️💰⏰]\s/, "")
-                          )
-                        }
+                        onClick={() => handleSuggestionClick(suggestion)}
                       >
                         {suggestion}
                       </div>
@@ -154,4 +155,4 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
       <MessageInput onSendMessage={onSendMessage} isLoading={isReplying} />
     </div>
   );
-};
+});
