@@ -1,7 +1,7 @@
 class ApiClient {
   private baseURL: string;
 
-  constructor(baseURL: string = "http://localhost:8080") {
+  constructor(baseURL: string = import.meta.env.VITE_API_BASE_URL || "http://localhost:8080") {
     this.baseURL = baseURL;
   }
 

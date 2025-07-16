@@ -16,3 +16,24 @@ export interface ChatSummary {
   };
 }
 
+export interface ChatResponse {
+  id: string;
+  content: string;
+  timestamp: string;
+  chatId?: string;
+}
+
+export interface CreateChatResponse {
+  id: string;
+  content: string;
+  timestamp: string;
+  chatId: string;
+}
+
+export interface SendMessageResponse {
+  id: string;
+  content: string;
+  timestamp: string;
+  chatId?: string;
+}
+

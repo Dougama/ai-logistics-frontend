@@ -1,5 +1,5 @@
 import { apiClient } from '../../../shared/services/api';
-import type { Chat, ChatSummary } from '../types';
+import type { Chat, ChatSummary, CreateChatResponse, SendMessageResponse, ChatMessage } from '../types';
 
 export class ChatService {
   async getUserChats(userId: string, lastSeen?: number): Promise<ChatSummary[]> {
@@ -10,20 +10,20 @@ export class ChatService {
     return apiClient.get<ChatSummary[]>(endpoint);
   }
 
-  async createChat(prompt: string): Promise<any> {
-    return apiClient.post('/chat', { prompt });
+  async createChat(prompt: string): Promise<CreateChatResponse> {
+    return apiClient.post<CreateChatResponse>('/chat', { prompt });
   }
 
-  async sendMessage(chatId: string, prompt: string): Promise<any> {
-    return apiClient.post(`/chat/${chatId}`, { prompt });
+  async sendMessage(chatId: string, prompt: string): Promise<SendMessageResponse> {
+    return apiClient.post<SendMessageResponse>(`/chat/${chatId}`, { prompt });
   }
 
   async deleteChat(chatId: string): Promise<void> {
     return apiClient.delete(`/chat/${chatId}`);
   }
 
-  async getChatMessages(chatId: string): Promise<any[]> {
-    return apiClient.get(`/chat/${chatId}/messages`);
+  async getChatMessages(chatId: string): Promise<ChatMessage[]> {
+    return apiClient.get<ChatMessage[]>(`/chat/${chatId}/messages`);
   }
 }
 

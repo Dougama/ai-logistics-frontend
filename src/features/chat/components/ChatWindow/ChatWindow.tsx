@@ -2,28 +2,34 @@
 
 import React, { useRef, useEffect, memo, useCallback } from "react";
 import { Container } from "@mantine/core";
-import { 
-  IconChartPie, 
-  IconEdit, 
-  IconUsers, 
-  IconNews,
-  IconBook,
-  IconBulb
-} from "@tabler/icons-react";
 import { MessageBubble } from "../MessageBubble";
 import { MessageInput } from "../MessageInput";
 import type { ChatMessage } from "../../types";
+
+interface ChatCategory {
+  id: string;
+  title: string;
+  subtitle: string;
+  icon: React.ComponentType<{ size?: number; className?: string }>;
+  color: string;
+}
 
 interface ChatWindowProps {
   messages: ChatMessage[];
   onSendMessage: (text: string) => void;
   isReplying: boolean;
+  showWelcome?: boolean;
+  categories?: ChatCategory[];
+  onCategoryClick?: (categoryId: string) => void;
 }
 
 export const ChatWindow: React.FC<ChatWindowProps> = memo(({
   messages,
   onSendMessage,
   isReplying,
+  showWelcome = true,
+  categories = [],
+  onCategoryClick,
 }) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -36,57 +42,14 @@ export const ChatWindow: React.FC<ChatWindowProps> = memo(({
     onSendMessage(cleanSuggestion);
   }, [onSendMessage]);
 
-  const handleFeatureClick = useCallback((question: string) => {
-    onSendMessage(question);
-  }, [onSendMessage]);
-
-  const quickActions = [
-    {
-      icon: IconChartPie,
-      title: "Insights",
-      description: "Análisis y métricas",
-      question: "Muéstrame insights de reparto"
-    },
-    {
-      icon: IconEdit,
-      title: "Reportar",
-      description: "Registrar eventos",
-      question: "Quiero reportar una incidencia"
-    },
-    {
-      icon: IconUsers,
-      title: "Clientes",
-      description: "Consultar clientes",
-      question: "Búsqueda de clientes"
-    },
-    {
-      icon: IconNews,
-      title: "Noticias",
-      description: "Eventos y avisos",
-      question: "Últimas noticias y eventos"
-    },
-    {
-      icon: IconBook,
-      title: "Documentación",
-      description: "Manuales y guías",
-      question: "Necesito consultar documentación"
-    },
-    {
-      icon: IconBulb,
-      title: "Sugerencias",
-      description: "Ideas de conversación",
-      question: "Dame sugerencias sobre qué preguntar"
-    }
-  ];
 
   return (
     <div className="chat-window">
       {/* Área de mensajes */}
       <div className="chat-window__messages">
         <Container size="md">
-          {messages.length === 0 && !isReplying && (
+          {messages.length === 0 && !isReplying && showWelcome && (
             <div className="chat-window__empty">
-              {/* Saludo */}
               <div className="chat-greeting">
                 <h2 className="chat-greeting__title">Hola, soy tu agente</h2>
                 <p className="chat-greeting__subtitle">
@@ -94,25 +57,27 @@ export const ChatWindow: React.FC<ChatWindowProps> = memo(({
                 </p>
               </div>
 
-              {/* Grid de 6 tarjetas */}
-              <div className="chat-actions-grid">
-                {quickActions.map((action, index) => {
-                  const Icon = action.icon;
-                  return (
-                    <div
-                      key={index}
-                      className="chat-action-card"
-                      onClick={() => handleFeatureClick(action.question)}
-                    >
-                      <div className="chat-action-card__icon">
-                        <Icon size={28} />
+              {/* Grid de categorías */}
+              {categories.length > 0 && (
+                <div className="chat-actions-grid">
+                  {categories.map((category) => {
+                    const IconComponent = category.icon;
+                    return (
+                      <div
+                        key={category.id}
+                        className="chat-action-card"
+                        onClick={() => onCategoryClick?.(category.id)}
+                      >
+                        <div className="chat-action-card__icon">
+                          <IconComponent size={28} />
+                        </div>
+                        <h3 className="chat-action-card__title">{category.title}</h3>
+                        <p className="chat-action-card__description">{category.subtitle}</p>
                       </div>
-                      <h3 className="chat-action-card__title">{action.title}</h3>
-                      <p className="chat-action-card__description">{action.description}</p>
-                    </div>
-                  );
-                })}
-              </div>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           )}
 
