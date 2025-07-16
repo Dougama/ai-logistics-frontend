@@ -2,7 +2,14 @@
 
 import React, { useRef, useEffect, memo, useCallback } from "react";
 import { Container } from "@mantine/core";
-import { IconSparkles } from "@tabler/icons-react";
+import { 
+  IconChartPie, 
+  IconEdit, 
+  IconUsers, 
+  IconNews,
+  IconBook,
+  IconBulb
+} from "@tabler/icons-react";
 import { MessageBubble } from "../MessageBubble";
 import { MessageInput } from "../MessageInput";
 import type { ChatMessage } from "../../types";
@@ -33,6 +40,45 @@ export const ChatWindow: React.FC<ChatWindowProps> = memo(({
     onSendMessage(question);
   }, [onSendMessage]);
 
+  const quickActions = [
+    {
+      icon: IconChartPie,
+      title: "Insights",
+      description: "Análisis y métricas",
+      question: "Muéstrame insights de reparto"
+    },
+    {
+      icon: IconEdit,
+      title: "Reportar",
+      description: "Registrar eventos",
+      question: "Quiero reportar una incidencia"
+    },
+    {
+      icon: IconUsers,
+      title: "Clientes",
+      description: "Consultar clientes",
+      question: "Búsqueda de clientes"
+    },
+    {
+      icon: IconNews,
+      title: "Noticias",
+      description: "Eventos y avisos",
+      question: "Últimas noticias y eventos"
+    },
+    {
+      icon: IconBook,
+      title: "Documentación",
+      description: "Manuales y guías",
+      question: "Necesito consultar documentación"
+    },
+    {
+      icon: IconBulb,
+      title: "Sugerencias",
+      description: "Ideas de conversación",
+      question: "Dame sugerencias sobre qué preguntar"
+    }
+  ];
+
   return (
     <div className="chat-window">
       {/* Área de mensajes */}
@@ -40,82 +86,32 @@ export const ChatWindow: React.FC<ChatWindowProps> = memo(({
         <Container size="md">
           {messages.length === 0 && !isReplying && (
             <div className="chat-window__empty">
-              {/* Icono principal */}
-              <div className="chat-window__empty-icon">
-                <IconSparkles
-                  size={56}
-                  color="white"
-                  style={{ position: "relative", zIndex: 1 }}
-                />
+              {/* Saludo */}
+              <div className="chat-greeting">
+                <h2 className="chat-greeting__title">Hola, soy tu agente</h2>
+                <p className="chat-greeting__subtitle">
+                  ¿Cómo te puedo ayudar hoy?
+                </p>
               </div>
 
-              <div className="chat-window__empty-content">
-                {/* Título principal */}
-                <h1 className="chat-window__empty-title">¡Hola! Soy Tracko</h1>
-
-                {/* Subtítulo */}
-                <p className="chat-window__empty-subtitle">
-                  Tu asistente de logística inteligente.
-                </p>
-
-                {/* Características destacadas */}
-                <div className="chat-features">
-                  <div
-                    className="chat-feature"
-                    onClick={() => handleFeatureClick("¿Cómo funciona el tiempo real?")}
-                  >
-                    <span className="chat-feature__icon">⚡</span>
-                    <h3 className="chat-feature__title">Tiempo Real</h3>
-                    <p className="chat-feature__description">
-                      Información actualizada
-                    </p>
-                  </div>
-
-                  <div
-                    className="chat-feature"
-                    onClick={() => handleFeatureClick("¿Qué tan precisos son los datos?")}
-                  >
-                    <span className="chat-feature__icon">🎯</span>
-                    <h3 className="chat-feature__title">Precisión</h3>
-                    <p className="chat-feature__description">
-                      Datos confiables
-                    </p>
-                  </div>
-                </div>
-
-                {/* Sugerencias de conversación */}
-                <div className="chat-suggestions">
-                  <h2 className="chat-suggestions__title">
-                    Prueba preguntando:
-                  </h2>
-
-                  <div className="chat-suggestions__list">
-                    {[
-                      "📦 ¿Cómo rastreo un envío?",
-                      "🚚 Optimizar mis rutas de entrega",
-                      "📊 Estado actual del inventario",
-                      "🗺️ Mejores rutas para hoy",
-                      "💰 Costos de envío",
-                      "⏰ Tiempos de entrega",
-                    ].map((suggestion, index) => (
-                      <div
-                        key={index}
-                        className="chat-suggestion"
-                        onClick={() => handleSuggestionClick(suggestion)}
-                      >
-                        {suggestion}
+              {/* Grid de 6 tarjetas */}
+              <div className="chat-actions-grid">
+                {quickActions.map((action, index) => {
+                  const Icon = action.icon;
+                  return (
+                    <div
+                      key={index}
+                      className="chat-action-card"
+                      onClick={() => handleFeatureClick(action.question)}
+                    >
+                      <div className="chat-action-card__icon">
+                        <Icon size={28} />
                       </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Call to action */}
-                <div className="chat-tip">
-                  <p className="chat-tip__text">
-                    💡 Tip: Puedes hacer preguntas específicas sobre tu
-                    operación logística
-                  </p>
-                </div>
+                      <h3 className="chat-action-card__title">{action.title}</h3>
+                      <p className="chat-action-card__description">{action.description}</p>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           )}

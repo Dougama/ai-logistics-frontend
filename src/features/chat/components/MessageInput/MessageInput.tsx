@@ -26,37 +26,28 @@ export const MessageInput: React.FC<MessageInputProps> = ({
   const hasContent = inputValue.trim().length > 0;
 
   return (
-    <div className="message-input">
-      <Container size="md">
-        <form onSubmit={handleSubmit} className="message-input__form">
-          <input
-            type="text"
-            value={inputValue}
-            onChange={(event) => setInputValue(event.currentTarget.value)}
-            placeholder="Escribe tu mensaje a Tracko..."
-            disabled={isLoading}
-            className="message-input__field"
-          />
-
-          <button
-            type="submit"
-            disabled={!hasContent || isLoading}
-            className={`message-input__button ${
-              hasContent && !isLoading
-                ? "message-input__button--enabled"
-                : isLoading
-                ? "message-input__button--loading"
-                : "message-input__button--disabled"
-            }`}
-          >
-            {isLoading ? (
-              <IconSparkles className="message-input__icon message-input__icon--loading" />
-            ) : (
-              <IconSend className="message-input__icon" />
-            )}
-          </button>
-        </form>
-      </Container>
+    <div className="message-input-fixed">
+      <form onSubmit={handleSubmit} className="message-input-fixed__form">
+        <input
+          type="text"
+          value={inputValue}
+          onChange={(event) => setInputValue(event.currentTarget.value)}
+          placeholder="Escribe tu mensaje..."
+          disabled={isLoading}
+          className="message-input-fixed__field"
+        />
+        <button
+          type="submit"
+          disabled={!hasContent || isLoading}
+          className="message-input-fixed__button"
+        >
+          {isLoading ? (
+            <IconSparkles className="message-input-fixed__icon loading" />
+          ) : (
+            <IconSend className="message-input-fixed__icon" />
+          )}
+        </button>
+      </form>
     </div>
   );
 };

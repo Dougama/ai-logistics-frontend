@@ -1,7 +1,9 @@
 import React, { useState } from "react";
-import { Stack, Title, Text, Paper, Anchor } from "@mantine/core";
 import { LoginForm } from "../components/LoginForm";
 import { RegisterForm } from "../components/RegisterForm";
+
+// Import auth component styles
+import "../../../styles/components/auth.css";
 
 export const AuthPage: React.FC = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -9,30 +11,18 @@ export const AuthPage: React.FC = () => {
   const toggleMode = () => setIsLogin(!isLogin);
 
   return (
-    <div
-      style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        height: "100vh",
-        backgroundColor: "#f1f3f5",
-      }}
-    >
-      <Paper
-        shadow="md"
-        p="xl"
-        withBorder
-        radius="md"
-        style={{ width: "400px" }}
-      >
-        <Title order={2} ta="center" mb="md">
-          {isLogin ? "Bienvenido" : "Crear Cuenta"}
-        </Title>
-        <Text c="dimmed" size="sm" ta="center" mb="xl">
-          {isLogin
-            ? "Inicia sesión para continuar"
-            : "Rellena los campos para registrarte"}
-        </Text>
+    <div className="auth-page">
+      <div className="auth-container">
+        <div className="auth-header">
+          <h1 className="auth-title">
+            {isLogin ? "Bienvenido a Tracko" : "Crear Cuenta"}
+          </h1>
+          <p className="auth-subtitle">
+            {isLogin
+              ? "Inicia sesión para continuar"
+              : "Rellena los campos para registrarte"}
+          </p>
+        </div>
 
         {isLogin ? (
           <LoginForm onToggleMode={toggleMode} />
@@ -40,13 +30,13 @@ export const AuthPage: React.FC = () => {
           <RegisterForm onToggleMode={toggleMode} />
         )}
 
-        <Text c="dimmed" ta="center" size="sm" mt="md">
+        <div className="auth-footer">
           {isLogin ? "¿No tienes cuenta?" : "¿Ya tienes cuenta?"}{" "}
-          <Anchor onClick={toggleMode} style={{ cursor: "pointer" }}>
+          <button onClick={toggleMode} className="auth-link">
             {isLogin ? "Regístrate" : "Inicia sesión"}
-          </Anchor>
-        </Text>
-      </Paper>
+          </button>
+        </div>
+      </div>
     </div>
   );
 };

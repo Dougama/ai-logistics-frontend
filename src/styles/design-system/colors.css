@@ -1,0 +1,64 @@
+/* =============================================================================
+   LUXURY COLOR SYSTEM - Design System Colors
+   ============================================================================= */
+
+:root {
+  /* Primary Color Palette */
+  --color-gold: #C1A774;          /* Luxury gold */
+  --color-navy: #091626;          /* Deep navy blue */
+  --color-slate: #464E59;         /* Medium gray */
+  --color-bronze: #B4895B;        /* Warm bronze */
+  --color-light: #F2F2F3;         /* Light gray/white */
+
+  /* Semantic Colors */
+  --color-primary: var(--color-navy);
+  --color-secondary: var(--color-slate);
+  --color-accent: var(--color-gold);
+  --color-background: var(--color-light);
+  --color-surface: #FFFFFF;
+  --color-text: var(--color-navy);
+  --color-text-secondary: var(--color-slate);
+  --color-text-muted: #8B92A3;
+
+  /* Interactive States */
+  --color-primary-hover: #0A1B2E;
+  --color-secondary-hover: #525863;
+  --color-accent-hover: #D4BC85;
+
+  /* Opacity Variants */
+  --color-primary-10: rgba(9, 22, 38, 0.1);
+  --color-primary-20: rgba(9, 22, 38, 0.2);
+  --color-primary-30: rgba(9, 22, 38, 0.3);
+  --color-secondary-10: rgba(70, 77, 89, 0.1);
+  --color-secondary-20: rgba(70, 77, 89, 0.2);
+  --color-accent-10: rgba(193, 167, 116, 0.1);
+  --color-accent-20: rgba(193, 167, 116, 0.2);
+
+  /* Status Colors */
+  --color-success: #10B981;
+  --color-warning: #F59E0B;
+  --color-error: #EF4444;
+  --color-info: var(--color-primary);
+
+  /* Border Colors */
+  --color-border: var(--color-secondary-20);
+  --color-border-light: var(--color-secondary-10);
+  --color-border-focus: var(--color-accent);
+}
+
+/* Utility Classes */
+.text-primary { color: var(--color-primary); }
+.text-secondary { color: var(--color-secondary); }
+.text-accent { color: var(--color-accent); }
+.text-muted { color: var(--color-text-muted); }
+
+.bg-primary { background-color: var(--color-primary); }
+.bg-secondary { background-color: var(--color-secondary); }
+.bg-accent { background-color: var(--color-accent); }
+.bg-surface { background-color: var(--color-surface); }
+.bg-background { background-color: var(--color-background); }
+
+.border-primary { border-color: var(--color-primary); }
+.border-secondary { border-color: var(--color-secondary); }
+.border-accent { border-color: var(--color-accent); }
+.border-light { border-color: var(--color-border-light); }

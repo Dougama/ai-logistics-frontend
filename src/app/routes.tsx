@@ -2,6 +2,7 @@ import React, { lazy, Suspense } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { useAuth } from "../shared/services/auth/AuthContext";
 import { LoadingScreen } from "../shared/components/ui";
+import { MainLayout } from "./layouts";
 
 // Lazy loading de features
 const AuthPage = lazy(() =>
@@ -14,11 +15,6 @@ const DashboardPage = lazy(() =>
   import("../features/dashboard").then((m) => ({ default: m.DashboardPage }))
 );
 
-const DocumentationPage = lazy(() =>
-  import("../features/documentation").then((m) => ({
-    default: m.DocumentationPage,
-  }))
-);
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({
   children,
@@ -27,7 +23,11 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({
 
   if (loading) return <LoadingScreen />;
 
-  return currentUser ? <>{children}</> : <Navigate to="/auth" replace />;
+  return currentUser ? (
+    <MainLayout>{children}</MainLayout>
+  ) : (
+    <Navigate to="/auth" replace />
+  );
 };
 
 export const AppRoutes: React.FC = () => {
@@ -62,15 +62,6 @@ export const AppRoutes: React.FC = () => {
         />
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
-        <Route
-          path="/documentation"
-          element={
-            <ProtectedRoute>
-              <DocumentationPage />
-            </ProtectedRoute>
-          }
-        />
-        ;
       </Routes>
     </Suspense>
   );

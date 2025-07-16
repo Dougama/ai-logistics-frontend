@@ -21,11 +21,25 @@ export default defineConfig({
     chunkSizeWarningLimit: 1000,
   },
   optimizeDeps: {
-    include: ['react', 'react-dom', 'react-router-dom', '@mantine/core'],
+    include: [
+      'react', 
+      'react-dom', 
+      'react-router-dom', 
+      '@mantine/core',
+      '@mantine/hooks',
+      '@tabler/icons-react'
+    ],
+    force: true,
   },
   server: {
     hmr: {
       overlay: false,
     },
+    fs: {
+      cachedChecks: false,
+    },
+  },
+  esbuild: {
+    logOverride: { 'this-is-undefined-in-esm': 'silent' },
   },
 });

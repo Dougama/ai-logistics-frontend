@@ -1,0 +1,65 @@
+/* =============================================================================
+   DESIGN SYSTEM - Complete Style System
+   ============================================================================= */
+
+/* Core System */
+@import './colors.css';
+@import './typography.css';
+@import './spacing.css';
+@import './layout.css';
+@import './base.css';
+@import './components.css';
+
+/* App-wide utility classes */
+.app-container {
+  min-height: 100vh;
+  background-color: var(--color-background);
+}
+
+.page {
+  min-height: 100vh;
+  padding: var(--space-4);
+}
+
+.page-centered {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+}
+
+/* Common animations */
+.fade-in {
+  animation: fadeIn 0.3s ease;
+}
+
+.slide-up {
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { 
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Mobile-first responsive utilities */
+@media (max-width: 767px) {
+  .mobile-hidden { display: none; }
+  .mobile-full { width: 100%; }
+}
+
+@media (min-width: 768px) {
+  .desktop-hidden { display: none; }
+}
