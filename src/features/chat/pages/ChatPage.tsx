@@ -2,6 +2,7 @@ import React, { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../shared/services/auth";
 import { ChatWindow } from "../components/ChatWindow";
+import { ChatSidebar } from "../components/ChatSidebar";
 import { useChatList } from "../hooks/useChatList";
 import { chatService, messageService } from "../services";
 import type { ChatMessage } from "../types";
@@ -12,7 +13,9 @@ import {
   IconNews, 
   IconBook, 
   IconBulb,
-  IconLayoutDashboard
+  IconLayoutDashboard,
+  IconMenu2,
+  IconX
 } from "@tabler/icons-react";
 
 // Import chat component styles
@@ -23,13 +26,14 @@ export const ChatPage: React.FC = () => {
   const navigate = useNavigate();
   const [activeChatId, setActiveChatId] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // Estados locales para mensajes
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isReplying, setIsReplying] = useState(false);
 
   const userId = currentUser?.uid || "user123";
-  const { addNewChat } = useChatList(userId);
+  const { chats, isLoading, isLoadingMore, hasMore, loadMoreChats, deleteChat, addNewChat } = useChatList(userId);
 
 
   // Enviar mensaje
@@ -167,33 +171,88 @@ export const ChatPage: React.FC = () => {
     setActiveChatId(null);
   };
 
-  // Siempre mostrar el chat, las categorías van dentro del ChatWindow
+  const handleSelectChat = useCallback((chatId: string) => {
+    setActiveChatId(chatId);
+    setMessages([]); // Aquí cargarías los mensajes del chat seleccionado
+    setSidebarOpen(false); // Cerrar sidebar en móvil
+    // TODO: Cargar mensajes del chat seleccionado
+    console.log('Chat seleccionado:', chatId);
+  }, []);
+
+  const handleNewChat = useCallback(() => {
+    setActiveChatId(null);
+    setMessages([]);
+    setSelectedCategory(null);
+    setSidebarOpen(false); // Cerrar sidebar en móvil
+  }, []);
+
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen);
+  };
+
+  // Layout con sidebar para historial de chats
   return (
-    <div className="chat-page-minimal">
-      <div className="chat-header">
-        <button 
-          className="chat-dashboard-icon" 
-          onClick={() => navigate('/dashboard')}
-          aria-label="Ir al Dashboard"
-        >
-          <IconLayoutDashboard size={24} />
-        </button>
-        <div className="chat-header-content">
-          <h1 className="chat-main-title">Agente de reparto</h1>
-          {messages.length === 0 && (
-            <p className="chat-main-subtitle">Basado en IA</p>
-          )}
+    <div className="chat-page-with-sidebar">
+      {/* Sidebar - Historial de chats */}
+      <div className={`chat-sidebar-container ${sidebarOpen ? 'chat-sidebar-container--open' : ''}`}>
+        <div className="chat-sidebar-header">
+          <h3 className="chat-sidebar-title">Historial</h3>
+          <button 
+            className="chat-sidebar-close" 
+            onClick={toggleSidebar}
+            aria-label="Cerrar historial"
+          >
+            <IconX size={20} />
+          </button>
         </div>
+        <ChatSidebar
+          chats={chats}
+          activeChatId={activeChatId}
+          isLoading={isLoading}
+          hasMore={hasMore}
+          isLoadingMore={isLoadingMore}
+          onSelectChat={handleSelectChat}
+          onNewChat={handleNewChat}
+          onDeleteChat={deleteChat}
+          onLoadMore={loadMoreChats}
+        />
       </div>
-      
-      <ChatWindow
-        messages={messages}
-        onSendMessage={handleSendMessage}
-        isReplying={isReplying}
-        showWelcome={true}
-        categories={chatCategories}
-        onCategoryClick={handleCategoryClick}
-      />
+
+      {/* Overlay para móvil */}
+      {sidebarOpen && <div className="chat-sidebar-overlay" onClick={toggleSidebar} />}
+
+      {/* Área principal del chat */}
+      <div className="chat-main-area">
+        <div className="chat-header">
+          <button 
+            className="chat-menu-icon" 
+            onClick={toggleSidebar}
+            aria-label="Abrir historial"
+          >
+            <IconMenu2 size={24} />
+          </button>
+          <button 
+            className="chat-dashboard-icon" 
+            onClick={() => navigate('/dashboard')}
+            aria-label="Ir al Dashboard"
+          >
+            <IconLayoutDashboard size={24} />
+          </button>
+          <div className="chat-header-content">
+            <h1 className="chat-main-title">Agente de reparto</h1>
+            <p className="chat-main-subtitle">Basado en IA</p>
+          </div>
+        </div>
+        
+        <ChatWindow
+          messages={messages}
+          onSendMessage={handleSendMessage}
+          isReplying={isReplying}
+          showWelcome={true}
+          categories={chatCategories}
+          onCategoryClick={handleCategoryClick}
+        />
+      </div>
     </div>
   );
 };

@@ -34,7 +34,9 @@ export const ChatWindow: React.FC<ChatWindowProps> = memo(({
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (messages.length > 0) {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
   }, [messages]);
 
   const handleSuggestionClick = useCallback((suggestion: string) => {

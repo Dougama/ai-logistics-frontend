@@ -17,6 +17,65 @@
   overflow: hidden; /* Eliminar scroll de página */
 }
 
+/* Chat Page with Sidebar Layout */
+.chat-page-with-sidebar {
+  height: 100vh;
+  background-color: var(--color-background);
+  display: flex;
+  overflow: hidden;
+}
+
+/* Chat Sidebar */
+.chat-sidebar-container {
+  width: 320px;
+  background-color: var(--color-surface);
+  border-right: 1px solid var(--color-border-light);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s ease;
+  z-index: 5; /* Menor que el header */
+}
+
+.chat-sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-4) var(--space-5);
+  border-bottom: 1px solid var(--color-border-light);
+  background-color: var(--color-background);
+}
+
+.chat-sidebar-title {
+  font-size: var(--text-lg);
+  font-weight: var(--font-semibold);
+  color: var(--color-primary);
+  margin: 0;
+}
+
+.chat-sidebar-close {
+  background: none;
+  border: none;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  padding: var(--space-2);
+  border-radius: var(--radius-lg);
+  transition: all 0.2s ease;
+  display: none; /* Solo visible en móvil */
+}
+
+.chat-sidebar-close:hover {
+  background-color: var(--color-background);
+  color: var(--color-text);
+}
+
+/* Chat Main Area */
+.chat-main-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
 /* Chat Header */
 .chat-header {
   display: flex;
@@ -24,11 +83,36 @@
   padding: var(--space-4) var(--space-6);
   position: relative;
   flex-shrink: 0; /* No se encoge */
+  z-index: 20; /* Asegurar que esté sobre otros elementos */
+  background-color: var(--color-background);
+}
+
+.chat-menu-icon {
+  position: absolute;
+  left: var(--space-4);
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--color-primary);
+  cursor: pointer;
+  padding: var(--space-2);
+  border-radius: var(--radius-lg);
+  transition: all 0.2s ease;
+  display: none; /* Oculto por defecto en desktop */
+  align-items: center;
+  justify-content: center;
+}
+
+.chat-menu-icon:hover {
+  background-color: var(--color-primary-10);
+  color: var(--color-accent);
+  transform: translateY(-50%) scale(1.05);
 }
 
 .chat-dashboard-icon {
   position: absolute;
-  left: var(--space-6);
+  right: var(--space-6);
   top: 50%;
   transform: translateY(-50%);
   background: none;
@@ -754,6 +838,41 @@
 
 /* Mobile responsiveness */
 @media (max-width: 767px) {
+  /* Sidebar móvil */
+  .chat-sidebar-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 280px;
+    transform: translateX(-100%);
+    z-index: 50;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .chat-sidebar-container--open {
+    transform: translateX(0);
+  }
+
+  .chat-sidebar-close {
+    display: flex; /* Mostrar en móvil */
+  }
+
+  .chat-sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 40;
+  }
+
+  /* Ocultar botón de menú en desktop */
+  .chat-menu-icon {
+    display: flex;
+  }
+
   .chat-grid {
     grid-template-columns: 1fr;
     grid-template-rows: repeat(6, 1fr);

@@ -17,15 +17,15 @@ export const DashboardPage: React.FC = () => {
       
       <div className="dashboard-bottom">
         <div className="dashboard-nav-buttons">
-          <button className="dashboard-nav-button" onClick={() => navigate('/documentation')}>
+          <button className="dashboard-nav-button dashboard-nav-button--files" onClick={() => navigate('/documentation')}>
             <IconFileText size={20} />
             Archivo
           </button>
-          <button className="dashboard-nav-button" onClick={() => console.log('Reportar')}>
+          <button className="dashboard-nav-button dashboard-nav-button--report" onClick={() => console.log('Reportar')}>
             <IconFlag size={20} />
             Reportar  
           </button>
-          <button className="dashboard-nav-button" onClick={() => console.log('Consultar')}>
+          <button className="dashboard-nav-button dashboard-nav-button--search" onClick={() => console.log('Consultar')}>
             <IconSearch size={20} />
             Consultar
           </button>

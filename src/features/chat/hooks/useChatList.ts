@@ -24,7 +24,12 @@ export const useChatList = (userId: string) => {
   }, [userId]);
 
   const loadMoreChats = useCallback(async () => {
-    if (isLoadingMore || !hasMore || chats.length === 0) return;
+    console.log('📥 Intentando cargar más chats...', { isLoadingMore, hasMore, chatsLength: chats.length });
+    
+    if (isLoadingMore || !hasMore || chats.length === 0) {
+      console.log('❌ No se puede cargar más:', { isLoadingMore, hasMore, chatsLength: chats.length });
+      return;
+    }
 
     setIsLoadingMore(true);
     try {
@@ -32,11 +37,14 @@ export const useChatList = (userId: string) => {
       const lastTimestamp = lastChat.lastUpdatedAt._seconds * 1000 + 
                            lastChat.lastUpdatedAt._nanoseconds / 1000000;
       
+      console.log('🔍 Cargando desde timestamp:', lastTimestamp);
       const newChats = await chatService.getUserChats(userId, lastTimestamp);
+      console.log('✅ Nuevos chats cargados:', newChats.length);
+      
       setChats(prev => [...prev, ...newChats]);
       setHasMore(newChats.length >= PAGE_SIZE);
     } catch (error) {
-      console.error('Error loading more chats:', error);
+      console.error('❌ Error loading more chats:', error);
     } finally {
       setIsLoadingMore(false);
     }
