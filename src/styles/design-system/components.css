@@ -142,9 +142,9 @@
 
 /* Message Bubble Styles */
 .message-bubble {
-  max-width: 80%;
-  padding: var(--space-4);
-  border-radius: var(--radius-xl);
+  width: 100%; /* Cambiado para usar todo el ancho */
+  padding: 0; /* Sin padding aquí, se maneja en message-content */
+  border-radius: 0; /* Sin border-radius aquí, se maneja en message-content */
   margin-bottom: var(--space-3);
   word-wrap: break-word;
 }

@@ -1,63 +1,40 @@
 import React from "react";
-import { useAuth } from "../../../shared/services/auth";
+import { useNavigate } from "react-router-dom";
+import { IconMessageCircle, IconFileText, IconFlag, IconSearch } from "@tabler/icons-react";
 
 // Import dashboard component styles
 import "../../../styles/components/dashboard.css";
 
 export const DashboardPage: React.FC = () => {
-  const { currentUser } = useAuth();
-
-  const stats = [
-    { number: "142", label: "Entregas Hoy" },
-    { number: "98%", label: "Eficiencia" },
-    { number: "23", label: "Rutas Activas" },
-    { number: "5.2h", label: "Tiempo Promedio" },
-  ];
-
-  const quickActions = [
-    { title: "Optimizar Rutas", description: "Calcular rutas más eficientes" },
-    { title: "Ver Inventario", description: "Consultar stock disponible" },
-    { title: "Generar Reporte", description: "Crear reporte de rendimiento" },
-    { title: "Seguir Envíos", description: "Rastrear paquetes en tránsito" },
-  ];
+  const navigate = useNavigate();
 
   return (
-    <div className="dashboard-page">
-      <div className="dashboard-container">
-        <div className="dashboard-header">
-          <h1 className="dashboard-title">Dashboard</h1>
-          <p className="dashboard-subtitle">
-            Bienvenido, {currentUser?.email?.split('@')[0] || 'Usuario'}
-          </p>
+    <div className="dashboard-clean">
+      <div className="dashboard-header">
+        <h1 className="dashboard-main-title">Centro de Logística</h1>
+        <p className="dashboard-subtitle">Sistema de gestión inteligente</p>
+      </div>
+      
+      <div className="dashboard-bottom">
+        <div className="dashboard-nav-buttons">
+          <button className="dashboard-nav-button" onClick={() => navigate('/documentation')}>
+            <IconFileText size={20} />
+            Archivo
+          </button>
+          <button className="dashboard-nav-button" onClick={() => console.log('Reportar')}>
+            <IconFlag size={20} />
+            Reportar  
+          </button>
+          <button className="dashboard-nav-button" onClick={() => console.log('Consultar')}>
+            <IconSearch size={20} />
+            Consultar
+          </button>
         </div>
-
-        <div className="dashboard-grid">
-          {stats.map((stat, index) => (
-            <div key={index} className="dashboard-card stats-card">
-              <div className="stats-number">{stat.number}</div>
-              <div className="stats-label">{stat.label}</div>
-            </div>
-          ))}
-        </div>
-
-        <div className="quick-actions">
-          <div className="quick-actions-header">
-            <h2 className="quick-actions-title">Acciones Rápidas</h2>
-          </div>
-          <div className="quick-actions-grid">
-            {quickActions.map((action, index) => (
-              <button key={index} className="quick-action-button">
-                <div className="quick-action-icon">⚡</div>
-                <div>
-                  <div className="quick-action-text">{action.title}</div>
-                  <div style={{ fontSize: 'var(--text-sm)', color: 'var(--color-text-muted)' }}>
-                    {action.description}
-                  </div>
-                </div>
-              </button>
-            ))}
-          </div>
-        </div>
+        
+        <button className="dashboard-chat-button" onClick={() => navigate('/chat')}>
+          <IconMessageCircle size={24} />
+          Iniciar Chat con Agente
+        </button>
       </div>
     </div>
   );

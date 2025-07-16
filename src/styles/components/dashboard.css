@@ -2,7 +2,17 @@
    DASHBOARD COMPONENTS - Styles for dashboard interface
    ============================================================================= */
 
-/* Dashboard Page Layout */
+/* New Clean Dashboard Layout */
+.dashboard-clean {
+  background-color: var(--color-background);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  padding: var(--space-8) var(--space-6) 120px;
+}
+
+/* Dashboard Page Layout (Legacy - keeping for compatibility) */
 .dashboard-page {
   min-height: 100vh;
   background-color: var(--color-background);
@@ -232,6 +242,146 @@
   line-height: var(--leading-relaxed);
 }
 
+/* Documentation Page */
+.documentation-page {
+  height: 100vh;
+  background-color: var(--color-background);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding-bottom: 80px; /* Espacio para bottom nav */
+}
+
+.documentation-header {
+  text-align: center;
+  padding: var(--space-4) var(--space-6);
+  flex-shrink: 0;
+}
+
+.documentation-main-title {
+  font-size: var(--text-3xl);
+  font-weight: var(--font-bold);
+  color: var(--color-primary);
+  margin-bottom: var(--space-2);
+}
+
+.documentation-main-subtitle {
+  font-size: var(--text-lg);
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.documentation-search {
+  padding: 0 var(--space-6) var(--space-4);
+  flex-shrink: 0;
+}
+
+.documentation-search-input {
+  max-width: 400px;
+  margin: 0 auto;
+  display: block;
+}
+
+/* Clean Dashboard Specific Styles */
+.dashboard-clean .dashboard-header {
+  text-align: center;
+  margin-bottom: var(--space-12);
+}
+
+.dashboard-main-title {
+  font-family: var(--font-primary);
+  font-size: var(--text-4xl);
+  font-weight: var(--font-bold);
+  color: var(--color-primary);
+  margin: 0 0 var(--space-2);
+  letter-spacing: var(--tracking-tight);
+  line-height: var(--leading-tight);
+}
+
+.dashboard-subtitle {
+  font-family: var(--font-primary);
+  font-size: var(--text-lg);
+  font-weight: var(--font-normal);
+  color: var(--color-text-secondary);
+  margin: 0;
+  letter-spacing: var(--tracking-wide);
+}
+
+.dashboard-bottom {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  width: 100%;
+  max-width: 600px;
+  align-items: center;
+  margin-top: auto;
+  margin-bottom: var(--space-8);
+}
+
+/* Navigation Buttons */
+.dashboard-nav-buttons {
+  display: flex;
+  gap: var(--space-3);
+  justify-content: center;
+  width: 100%;
+}
+
+.dashboard-nav-button {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-lg);
+  padding: var(--space-3) var(--space-4);
+  color: var(--color-text);
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: 60px;
+}
+
+.dashboard-nav-button:hover {
+  background-color: var(--color-accent-10);
+  border-color: var(--color-accent);
+  transform: translateY(-1px);
+}
+
+.dashboard-nav-button:active {
+  transform: translateY(0);
+}
+
+/* Main Chat Button */
+.dashboard-chat-button {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  background-color: var(--color-primary);
+  border: none;
+  border-radius: var(--radius-lg);
+  padding: var(--space-4) var(--space-8);
+  color: white;
+  font-size: var(--text-lg);
+  font-weight: var(--font-semibold);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 280px;
+  min-height: 50px;
+  justify-content: center;
+}
+
+.dashboard-chat-button:hover {
+  background-color: var(--color-primary-hover);
+  transform: translateY(-1px);
+}
+
+.dashboard-chat-button:active {
+  transform: translateY(0);
+}
+
 /* Mobile responsiveness */
 @media (max-width: 767px) {
   .dashboard-page {
@@ -249,5 +399,48 @@
   
   .dashboard-title {
     font-size: var(--text-2xl);
+  }
+
+  .documentation-search {
+    padding: 0 var(--space-3) var(--space-3);
+  }
+
+  /* Clean Dashboard Mobile */
+  .dashboard-clean {
+    padding: var(--space-6) var(--space-4) 120px;
+  }
+
+  .dashboard-clean .dashboard-header {
+    margin-bottom: var(--space-8);
+  }
+
+  .dashboard-main-title {
+    font-size: var(--text-3xl);
+  }
+
+  .dashboard-subtitle {
+    font-size: var(--text-base);
+  }
+
+  .dashboard-bottom {
+    gap: var(--space-4);
+    margin-bottom: var(--space-6);
+  }
+
+  .dashboard-chat-button {
+    font-size: var(--text-base);
+    padding: var(--space-3) var(--space-6);
+    min-width: 250px;
+    min-height: 45px;
+  }
+
+  .dashboard-nav-buttons {
+    gap: var(--space-2);
+  }
+
+  .dashboard-nav-button {
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--text-xs);
+    min-height: 50px;
   }
 }

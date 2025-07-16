@@ -47,7 +47,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = memo(({
     <div className="chat-window">
       {/* Área de mensajes */}
       <div className="chat-window__messages">
-        <Container size="md">
+        <div className="chat-messages-container">
           {messages.length === 0 && !isReplying && showWelcome && (
             <div className="chat-window__empty">
               <div className="chat-greeting">
@@ -109,7 +109,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = memo(({
           )}
 
           <div ref={messagesEndRef} />
-        </Container>
+        </div>
       </div>
 
       {/* Input de mensajes */}

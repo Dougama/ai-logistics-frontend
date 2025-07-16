@@ -23,9 +23,10 @@ export const DocumentCard: React.FC<DocumentCardProps> = ({
   const getCategoryColor = (category: string) => {
     const colors: Record<string, string> = {
       Reparto: "blue",
-      People: "green",
+      People: "green", 
       Seguridad: "red",
       Flota: "orange",
+      SOPs: "purple",
     };
     return colors[category] || "gray";
   };

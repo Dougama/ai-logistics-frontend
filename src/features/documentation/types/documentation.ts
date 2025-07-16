@@ -14,6 +14,7 @@ export enum DocumentCategory {
   PEOPLE = "People",
   SEGURIDAD = "Seguridad",
   FLOTA = "Flota",
+  SOPS = "SOPs",
 }
 
 export interface DocumentsByCategory {

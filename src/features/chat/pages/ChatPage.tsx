@@ -168,9 +168,9 @@ export const ChatPage: React.FC = () => {
   return (
     <div className="chat-page-minimal">
       <div className="chat-header">
-        <h1 className="chat-main-title">Asistente IA</h1>
+        <h1 className="chat-main-title">Agente de reparto</h1>
         {messages.length === 0 && (
-          <p className="chat-main-subtitle">Selecciona un tema para empezar a chatear</p>
+          <p className="chat-main-subtitle">Basado en IA</p>
         )}
       </div>
       
