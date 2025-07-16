@@ -59,6 +59,11 @@
   padding-bottom: 80px;
 }
 
+/* Pages without bottom nav don't need extra padding */
+.page-without-bottom-nav {
+  padding-bottom: 0;
+}
+
 /* Desktop adjustments */
 @media (min-width: 768px) {
   .bottom-navigation {

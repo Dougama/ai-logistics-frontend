@@ -28,13 +28,19 @@ export const MessageInput: React.FC<MessageInputProps> = ({
   return (
     <div className="message-input-fixed">
       <form onSubmit={handleSubmit} className="message-input-fixed__form">
-        <input
-          type="text"
+        <textarea
           value={inputValue}
           onChange={(event) => setInputValue(event.currentTarget.value)}
           placeholder="Escribe tu mensaje..."
           disabled={isLoading}
           className="message-input-fixed__field"
+          rows={1}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+              e.preventDefault();
+              handleSubmit(e);
+            }
+          }}
         />
         <button
           type="submit"

@@ -1,4 +1,5 @@
 import React, { useState, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../shared/services/auth";
 import { ChatWindow } from "../components/ChatWindow";
 import { useChatList } from "../hooks/useChatList";
@@ -10,7 +11,8 @@ import {
   IconUsers, 
   IconNews, 
   IconBook, 
-  IconBulb 
+  IconBulb,
+  IconLayoutDashboard
 } from "@tabler/icons-react";
 
 // Import chat component styles
@@ -18,6 +20,7 @@ import "../../../styles/components/chat.css";
 
 export const ChatPage: React.FC = () => {
   const { currentUser } = useAuth();
+  const navigate = useNavigate();
   const [activeChatId, setActiveChatId] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
@@ -168,10 +171,19 @@ export const ChatPage: React.FC = () => {
   return (
     <div className="chat-page-minimal">
       <div className="chat-header">
-        <h1 className="chat-main-title">Agente de reparto</h1>
-        {messages.length === 0 && (
-          <p className="chat-main-subtitle">Basado en IA</p>
-        )}
+        <button 
+          className="chat-dashboard-icon" 
+          onClick={() => navigate('/dashboard')}
+          aria-label="Ir al Dashboard"
+        >
+          <IconLayoutDashboard size={24} />
+        </button>
+        <div className="chat-header-content">
+          <h1 className="chat-main-title">Agente de reparto</h1>
+          {messages.length === 0 && (
+            <p className="chat-main-subtitle">Basado en IA</p>
+          )}
+        </div>
       </div>
       
       <ChatWindow
