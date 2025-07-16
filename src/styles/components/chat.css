@@ -32,17 +32,26 @@
   border-right: 1px solid var(--color-border-light);
   display: flex;
   flex-direction: column;
-  transition: transform 0.3s ease;
-  z-index: 5; /* Menor que el header */
+  transition: all 0.3s ease;
+  z-index: 1; /* Mucho menor que el header */
+  overflow: hidden;
+  position: relative; /* Asegurar posicionamiento normal */
+}
+
+.chat-sidebar-container.chat-sidebar-container--collapsed {
+  width: 60px;
 }
 
 .chat-sidebar-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: var(--space-4) var(--space-5);
+  justify-content: center;
+  padding: var(--space-3) var(--space-4);
   border-bottom: 1px solid var(--color-border-light);
   background-color: var(--color-background);
+  position: relative;
+  min-height: 56px;
+  z-index: 2; /* Menor que el header principal */
 }
 
 .chat-sidebar-title {
@@ -61,6 +70,8 @@
   border-radius: var(--radius-lg);
   transition: all 0.2s ease;
   display: none; /* Solo visible en móvil */
+  position: absolute;
+  right: var(--space-3);
 }
 
 .chat-sidebar-close:hover {
@@ -80,23 +91,26 @@
 .chat-header {
   display: flex;
   align-items: center;
-  padding: var(--space-4) var(--space-6);
-  position: relative;
+  padding: var(--space-2) var(--space-4);
+  position: sticky;
+  top: 0;
   flex-shrink: 0; /* No se encoge */
-  z-index: 20; /* Asegurar que esté sobre otros elementos */
+  z-index: 100; /* Prioridad máxima sobre cualquier elemento */
   background-color: var(--color-background);
+  min-height: 48px; /* Reducido de ~64px a 48px (80% aprox) */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Sombra para separar del contenido */
 }
 
 .chat-menu-icon {
   position: absolute;
-  left: var(--space-4);
+  left: var(--space-3);
   top: 50%;
   transform: translateY(-50%);
   background: none;
   border: none;
   color: var(--color-primary);
   cursor: pointer;
-  padding: var(--space-2);
+  padding: var(--space-1);
   border-radius: var(--radius-lg);
   transition: all 0.2s ease;
   display: none; /* Oculto por defecto en desktop */
@@ -112,14 +126,14 @@
 
 .chat-dashboard-icon {
   position: absolute;
-  right: var(--space-6);
+  right: var(--space-3);
   top: 50%;
   transform: translateY(-50%);
   background: none;
   border: none;
   color: var(--color-primary);
   cursor: pointer;
-  padding: var(--space-2);
+  padding: var(--space-1);
   border-radius: var(--radius-lg);
   transition: all 0.2s ease;
   display: flex;
@@ -160,16 +174,20 @@
 }
 
 .chat-main-title {
-  font-size: var(--text-3xl);
+  font-size: var(--text-2xl);
   font-weight: var(--font-bold);
   color: var(--color-primary);
-  margin-bottom: var(--space-2);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
 }
 
 .chat-main-subtitle {
-  font-size: var(--text-lg);
+  font-size: var(--text-sm);
   color: var(--color-text-secondary);
   margin: 0;
+  font-weight: var(--font-normal);
 }
 
 /* Chat Grid Layout - 2 rows x 3 columns */
@@ -898,17 +916,32 @@
   }
 }
 
+/* Desktop - show collapse toggle, hide menu button */
+@media (min-width: 768px) {
+  .sidebar-collapse-toggle {
+    display: flex !important;
+  }
+  
+  .chat-menu-icon {
+    display: none !important;
+  }
+  
+  .chat-header {
+    z-index: 1000 !important; /* Forzar prioridad máxima */
+  }
+}
+
 /* Mobile responsiveness */
 @media (max-width: 767px) {
   /* Sidebar móvil */
   .chat-sidebar-container {
     position: fixed;
-    top: 0;
+    top: 48px; /* Debajo del header */
     left: 0;
-    height: 100vh;
-    width: 280px;
+    height: calc(100vh - 48px); /* Altura menos el header */
+    width: 75vw;
     transform: translateX(-100%);
-    z-index: 50;
+    z-index: 10; /* Muy debajo del header (z-index: 100) */
     box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
   }
 
@@ -920,17 +953,38 @@
     display: flex; /* Mostrar en móvil */
   }
 
+  /* Ocultar botón de colapsar en móvil */
+  .chat-sidebar-collapse-desktop {
+    display: none;
+  }
+  
+  .sidebar-collapse-toggle {
+    display: none !important;
+  }
+  
+  /* Forzar que no esté colapsado en móvil */
+  .chat-sidebar-container--collapsed {
+    width: 75vw !important;
+  }
+  
+  /* Arreglar superposición del botón hamburguesa con el título */
+  .chat-header-content {
+    margin-left: 48px; /* Espacio para el botón hamburguesa */
+    margin-right: 48px; /* Espacio para el botón dashboard */
+  }
+}
+
   .chat-sidebar-overlay {
     position: fixed;
-    top: 0;
+    top: 48px; /* Debajo del header */
     left: 0;
     right: 0;
     bottom: 0;
     background-color: rgba(0, 0, 0, 0.5);
-    z-index: 40;
+    z-index: 5; /* Debajo del sidebar y del header */
   }
 
-  /* Ocultar botón de menú en desktop */
+  /* Mostrar botón de menú en móvil */
   .chat-menu-icon {
     display: flex;
   }

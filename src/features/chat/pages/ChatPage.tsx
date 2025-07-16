@@ -15,7 +15,9 @@ import {
   IconBulb,
   IconLayoutDashboard,
   IconMenu2,
-  IconX
+  IconX,
+  IconChevronLeft,
+  IconChevronRight
 } from "@tabler/icons-react";
 
 // Import chat component styles
@@ -27,6 +29,7 @@ export const ChatPage: React.FC = () => {
   const [activeChatId, setActiveChatId] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   // Estados locales para mensajes
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -171,12 +174,19 @@ export const ChatPage: React.FC = () => {
     setActiveChatId(null);
   };
 
-  const handleSelectChat = useCallback((chatId: string) => {
+  const handleSelectChat = useCallback(async (chatId: string) => {
     setActiveChatId(chatId);
-    setMessages([]); // Aquí cargarías los mensajes del chat seleccionado
+    setMessages([]); // Limpiar mensajes anteriores
     setSidebarOpen(false); // Cerrar sidebar en móvil
-    // TODO: Cargar mensajes del chat seleccionado
-    console.log('Chat seleccionado:', chatId);
+    
+    try {
+      // Cargar mensajes del chat seleccionado
+      const chatMessages = await chatService.getChatMessages(chatId);
+      setMessages(chatMessages);
+    } catch (error) {
+      console.error('Error loading chat messages:', error);
+      // Mantener mensajes vacíos en caso de error
+    }
   }, []);
 
   const handleNewChat = useCallback(() => {
@@ -190,31 +200,27 @@ export const ChatPage: React.FC = () => {
     setSidebarOpen(!sidebarOpen);
   };
 
+  const toggleSidebarCollapse = () => {
+    setSidebarCollapsed(!sidebarCollapsed);
+  };
+
   // Layout con sidebar para historial de chats
   return (
     <div className="chat-page-with-sidebar">
       {/* Sidebar - Historial de chats */}
-      <div className={`chat-sidebar-container ${sidebarOpen ? 'chat-sidebar-container--open' : ''}`}>
-        <div className="chat-sidebar-header">
-          <h3 className="chat-sidebar-title">Historial</h3>
-          <button 
-            className="chat-sidebar-close" 
-            onClick={toggleSidebar}
-            aria-label="Cerrar historial"
-          >
-            <IconX size={20} />
-          </button>
-        </div>
+      <div className={`chat-sidebar-container ${sidebarOpen ? 'chat-sidebar-container--open' : ''} ${sidebarCollapsed ? 'chat-sidebar-container--collapsed' : ''}`}>
         <ChatSidebar
           chats={chats}
           activeChatId={activeChatId}
           isLoading={isLoading}
           hasMore={hasMore}
           isLoadingMore={isLoadingMore}
+          isCollapsed={sidebarCollapsed}
           onSelectChat={handleSelectChat}
           onNewChat={handleNewChat}
           onDeleteChat={deleteChat}
           onLoadMore={loadMoreChats}
+          onToggleCollapse={toggleSidebarCollapse}
         />
       </div>
 
@@ -239,8 +245,10 @@ export const ChatPage: React.FC = () => {
             <IconLayoutDashboard size={24} />
           </button>
           <div className="chat-header-content">
-            <h1 className="chat-main-title">Agente de reparto</h1>
-            <p className="chat-main-subtitle">Basado en IA</p>
+            <h1 className="chat-main-title">
+              Agente de reparto
+              <span className="chat-main-subtitle">Basado en IA</span>
+            </h1>
           </div>
         </div>
         
