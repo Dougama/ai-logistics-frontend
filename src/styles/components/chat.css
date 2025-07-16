@@ -695,7 +695,7 @@
 .message-input-fixed {
   position: fixed;
   bottom: 0;
-  left: 0;
+  left: 320px; /* Ancho del sidebar en desktop */
   right: 0;
   background-color: transparent;
   padding: var(--space-4);
@@ -742,11 +742,11 @@
 }
 
 .message-input-fixed__button {
-  min-width: 56px;
-  height: 56px;
+  min-width: 48px;
+  height: 48px;
   border-radius: var(--radius-full);
-  background-color: var(--color-primary);
-  color: var(--color-surface);
+  background-color: var(--color-navy);
+  color: white;
   border: none;
   display: flex;
   align-items: center;
@@ -754,10 +754,11 @@
   cursor: pointer;
   transition: all 0.2s ease;
   align-self: flex-end;
+  margin-bottom: 4px;
 }
 
 .message-input-fixed__button:hover:not(:disabled) {
-  background-color: var(--color-primary-hover);
+  background-color: var(--color-charcoal);
   transform: scale(1.05);
 }
 
@@ -765,6 +766,67 @@
   opacity: 0.5;
   cursor: not-allowed;
   transform: none;
+}
+
+/* Contenedor de botones izquierdos */
+.message-input-fixed__left-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-self: flex-end;
+  margin-bottom: 4px;
+}
+
+/* Botón + para adjuntar */
+.message-input-fixed__plus-button {
+  min-width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  background-color: transparent;
+  color: var(--color-charcoal);
+  border: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.message-input-fixed__plus-button:hover:not(:disabled) {
+  background-color: var(--color-light);
+  color: var(--color-navy);
+  border-color: var(--color-navy);
+}
+
+.message-input-fixed__plus-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Botón micrófono */
+.message-input-fixed__mic-button {
+  min-width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  background-color: transparent;
+  color: var(--color-charcoal);
+  border: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.message-input-fixed__mic-button:hover:not(:disabled) {
+  background-color: var(--color-light);
+  color: var(--color-navy);
+  border-color: var(--color-navy);
+}
+
+.message-input-fixed__mic-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .message-input-fixed__icon {
@@ -885,6 +947,7 @@
   }
   
   .message-input-fixed {
+    left: 0; /* Sin sidebar en móvil */
     padding: var(--space-3);
   }
 
