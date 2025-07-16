@@ -58,10 +58,10 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
   };
 
   return (
-    <Box h="100%" style={{ display: 'flex', flexDirection: 'column', width: isCollapsed ? '60px' : '100%', transition: 'width 0.3s ease' }}>
+    <Box h="100%" style={{ display: 'flex', flexDirection: 'column', width: isCollapsed ? '60px' : '100%', transition: 'width 0.3s ease', overflow: 'hidden' }}>
       {/* Collapse toggle button - Desktop only */}
       {onToggleCollapse && (
-        <Box style={{ display: 'flex', justifyContent: 'center', marginBottom: '8px', padding: '8px 12px 0 12px' }}>
+        <Box className="sidebar-header-container" style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center', gap: '8px', marginBottom: '8px', padding: '8px 12px 0 12px', minHeight: '52px', position: 'relative' }}>
           <ActionIcon
             onClick={onToggleCollapse}
             variant="subtle"
@@ -90,11 +90,29 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
           >
             {isCollapsed ? <IconChevronRight size={16} /> : <IconChevronLeft size={16} />}
           </ActionIcon>
+          <Text 
+            size="xs" 
+            className="sidebar-datetime" 
+            style={{ 
+              color: 'var(--color-charcoal)', 
+              fontSize: '17.28px',
+              opacity: isCollapsed ? 0 : 1,
+              transition: 'opacity 0.3s ease',
+              position: 'absolute',
+              left: '64px',
+              top: '50%',
+              transform: 'translateY(-50%)',
+              whiteSpace: 'nowrap',
+              pointerEvents: isCollapsed ? 'none' : 'auto'
+            }}
+          >
+            {new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })} - {new Date().toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit' })}
+          </Text>
         </Box>
       )}
 
       {/* Header with new chat button */}
-      <Box style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px', padding: '16px 12px 0 12px' }}>
+      <Box style={{ display: 'flex', justifyContent: 'flex-start', marginBottom: '16px', padding: '16px 12px 0 12px' }}>
         {/* New Chat Button */}
         {!isCollapsed ? (
           <Button
@@ -160,7 +178,7 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
       {/* Recientes Label */}
       {!isCollapsed && (
         <Box style={{ padding: '0 12px', marginBottom: '8px' }}>
-          <Text size="xs" style={{ color: 'var(--color-charcoal)', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+          <Text size="xs" style={{ color: 'var(--color-charcoal)', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px', fontSize: '14.5px' }}>
             Recientes
           </Text>
         </Box>
@@ -185,7 +203,7 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
               }
             }}
           >
-            <Stack gap="2px" pr="xs">
+            <Stack gap="2.2px" px="xs">
               {isLoading ? (
                 <Text ta="center" c="dimmed" size="sm">
                   Cargando chats...
@@ -227,7 +245,7 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
                             minWidth: 0,
                             color: chat.id === activeChatId ? 'var(--color-navy)' : 'var(--color-charcoal)',
                             fontWeight: chat.id === activeChatId ? '500' : '400',
-                            fontSize: '14px',
+                            fontSize: '15.4px', // 14px * 1.1 = 15.4px
                           }}
                         >
                           {chat.title}
@@ -285,7 +303,7 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
               styles={{
                 root: {
                   color: 'var(--color-charcoal)',
-                  fontSize: '12px',
+                  fontSize: '13.2px',
                 }
               }}
             >

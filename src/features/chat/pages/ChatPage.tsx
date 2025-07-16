@@ -246,8 +246,7 @@ export const ChatPage: React.FC = () => {
           </button>
           <div className="chat-header-content">
             <h1 className="chat-main-title">
-              Agente de reparto
-              <span className="chat-main-subtitle">Basado en IA</span>
+              Tracko
             </h1>
           </div>
         </div>
