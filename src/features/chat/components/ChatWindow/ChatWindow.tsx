@@ -4,6 +4,8 @@ import React, { useRef, useEffect, memo, useCallback } from "react";
 import { Container } from "@mantine/core";
 import { MessageBubble } from "../MessageBubble";
 import { MessageInput } from "../MessageInput";
+import { useOptimizedScroll } from "../../hooks/useOptimizedScroll";
+import { useVirtualizedMessages } from "../../hooks/useVirtualizedMessages";
 import type { ChatMessage } from "../../types";
 
 interface ChatCategory {
@@ -32,12 +34,53 @@ export const ChatWindow: React.FC<ChatWindowProps> = memo(({
   onCategoryClick,
 }) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
 
+  // Hook de scroll optimizado
+  const { scrollRef, scrollToBottom, isAtBottom } = useOptimizedScroll({
+    smoothScroll: true,
+    debounceTime: 100,
+  });
+
+  // Hook de virtualización para mensajes largos
+  const {
+    shouldVirtualize,
+    visibleItems,
+    totalHeight,
+    offsetY,
+    handleScroll,
+  } = useVirtualizedMessages(messages, {
+    estimatedItemHeight: 100,
+    overscan: 5,
+    containerHeight: 600,
+    virtualizationThreshold: 50,
+  });
+
+  // Auto-scroll cuando llegan nuevos mensajes
   useEffect(() => {
     if (messages.length > 0) {
-      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+      // Solo auto-scroll si el usuario está cerca del final
+      if (isAtBottom() || messages.length === 1) {
+        // Usar RAF para mejor rendimiento
+        requestAnimationFrame(() => {
+          scrollToBottom();
+        });
+      }
     }
-  }, [messages]);
+  }, [messages, isAtBottom, scrollToBottom]);
+
+  // Sincronizar scroll con virtualización
+  useEffect(() => {
+    const element = scrollRef.current;
+    if (!element || !shouldVirtualize) return;
+
+    const handleScrollEvent = () => {
+      handleScroll(element.scrollTop);
+    };
+
+    element.addEventListener('scroll', handleScrollEvent, { passive: true });
+    return () => element.removeEventListener('scroll', handleScrollEvent);
+  }, [shouldVirtualize, handleScroll, scrollRef]);
 
   const handleSuggestionClick = useCallback((suggestion: string) => {
     const cleanSuggestion = suggestion.replace(/^[📦🚚📊🗺️💰⏰]\s/, "");
@@ -47,9 +90,21 @@ export const ChatWindow: React.FC<ChatWindowProps> = memo(({
 
   return (
     <div className="chat-window">
-      {/* Área de mensajes */}
-      <div className="chat-window__messages">
-        <div className="chat-messages-container">
+      {/* Área de mensajes con scroll optimizado */}
+      <div 
+        ref={scrollRef}
+        className="chat-window__messages"
+        style={{
+          height: shouldVirtualize ? totalHeight : undefined,
+        }}
+      >
+        <div 
+          ref={messagesContainerRef}
+          className="chat-messages-container"
+          style={{
+            transform: shouldVirtualize ? `translateY(${offsetY}px)` : undefined,
+          }}
+        >
           {messages.length === 0 && !isReplying && showWelcome && (
             <div className="chat-window__empty">
               <div className="chat-greeting">
@@ -83,10 +138,21 @@ export const ChatWindow: React.FC<ChatWindowProps> = memo(({
             </div>
           )}
 
-          {/* Mensajes */}
-          {messages.map((msg) => (
-            <MessageBubble key={msg.id} message={msg} />
-          ))}
+          {/* Mensajes - Renderizado normal o virtualizado */}
+          {shouldVirtualize ? (
+            // Renderizado virtualizado para listas largas
+            visibleItems.map((item) => (
+              <MessageBubble 
+                key={item.message.id} 
+                message={item.message}
+              />
+            ))
+          ) : (
+            // Renderizado normal para listas cortas
+            messages.map((msg) => (
+              <MessageBubble key={msg.id} message={msg} />
+            ))
+          )}
 
           {/* Indicador de escritura */}
           {isReplying && (

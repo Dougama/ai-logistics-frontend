@@ -24,6 +24,8 @@
   display: flex;
   overflow: hidden;
   position: relative;
+  margin: 0;
+  padding: 0;
 }
 
 .chat-page-with-sidebar::before {
@@ -113,19 +115,34 @@
   flex-direction: column;
   overflow: hidden;
   height: 100vh;
+  margin: 0;
+  padding: 0;
 }
 
 /* Chat Header */
 .chat-header {
   display: flex;
   align-items: center;
-  padding: var(--space-1) var(--space-4);
-  position: relative;
+  padding: var(--space-2) var(--space-4);
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
   flex-shrink: 0; /* No se encoge */
   z-index: 100; /* Prioridad máxima sobre cualquier elemento */
   background-color: var(--color-background);
-  min-height: 38px; /* Reducido 20%: 48px * 0.8 = 38.4px ≈ 38px */
+  min-height: 48px;
   transition: none; /* Sin transiciones para evitar parpadeos */
+  margin: 0;
+  width: 100%;
+  /* Optimización de rendimiento */
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  contain: layout style;
+  /* Mejor separación visual */
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .chat-menu-icon {
@@ -346,20 +363,34 @@
   height: 100%; /* Usa toda la altura disponible */
   background-color: white;
   position: relative;
+  overflow: hidden;
+  /* Optimización de rendimiento */
+  will-change: auto;
+  contain: layout style;
 }
 
 .chat-window__messages {
   flex: 1;
   overflow-y: auto; /* Solo scroll aquí */
-  padding: 0; /* Sin padding lateral */
+  overflow-x: hidden; /* Evitar scroll horizontal */
+  padding: var(--space-4) var(--space-4) 0 var(--space-4); /* Padding top y lateral, no bottom */
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
   min-height: 0; /* Permite que se encoja */
   background-color: rgba(255, 255, 255, 0.3); /* Fondo sutil más claro */
-  border-radius: var(--radius-lg);
+  border-radius: 0; /* Sin borde redondeado para aprovechar toda la pantalla */
   margin: 0; /* Sin margen */
   width: 100%; /* Todo el ancho */
+  /* Optimización de scroll para móviles */
+  -webkit-overflow-scrolling: touch;
+  /* Evitar bounce en iOS */
+  overscroll-behavior: contain;
+  /* Scroll smooth nativo */
+  scroll-behavior: smooth;
+  /* Optimización de rendimiento */
+  will-change: scroll-position;
+  contain: size layout style;
 }
 
 .chat-messages-container {
@@ -462,6 +493,26 @@
   gap: var(--space-3);
 }
 
+/* Scroll personalizado para mensajes */
+.chat-window__messages::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chat-window__messages::-webkit-scrollbar-track {
+  background: var(--color-background);
+}
+
+.chat-window__messages::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: var(--radius-full);
+  transition: background-color 0.2s ease;
+}
+
+.chat-window__messages::-webkit-scrollbar-thumb:hover {
+  background: var(--color-primary);
+}
+
+/* Scroll para chat messages legacy */
 .chat-messages::-webkit-scrollbar {
   width: 6px;
 }
@@ -481,6 +532,13 @@
   flex-direction: column;
   margin-bottom: var(--space-4);
   animation: slideUp 0.3s ease;
+  /* Optimización de rendimiento */
+  will-change: transform;
+  contain: layout style;
+  /* Mejorar renderizado de texto */
+  text-rendering: optimizeSpeed;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 .message-bubble--user {
@@ -758,11 +816,25 @@
 
 /* Message Input Fixed */
 .message-input-fixed {
-  position: relative;
-  background-color: transparent;
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: var(--color-background);
   padding: var(--space-4);
   z-index: 40;
   flex-shrink: 0; /* No se encoge */
+  margin: 0;
+  width: 100%;
+  border-top: 1px solid var(--color-border-light);
+  /* Mejorar rendimiento en móviles */
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  /* Evitar problemas de layout */
+  contain: layout style;
+  /* Backdrop blur para mejor separación visual */
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 .message-input-fixed__form {
