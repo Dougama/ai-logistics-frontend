@@ -204,7 +204,7 @@ export const ChatPage: React.FC = () => {
 
   // Layout con sidebar para historial de chats
   return (
-    <div className="chat-page-with-sidebar">
+    <div className={`chat-page-with-sidebar ${sidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
       {/* Header fijo global */}
       <div className="chat-header">
         <button 
