@@ -207,6 +207,29 @@ export const ChatPage: React.FC = () => {
   // Layout con sidebar para historial de chats
   return (
     <div className="chat-page-with-sidebar">
+      {/* Header fijo global */}
+      <div className="chat-header">
+        <button 
+          className="chat-menu-icon" 
+          onClick={toggleSidebar}
+          aria-label="Abrir historial"
+        >
+          <IconMenu2 size={24} />
+        </button>
+        <button 
+          className="chat-dashboard-icon" 
+          onClick={() => navigate('/dashboard')}
+          aria-label="Ir al Dashboard"
+        >
+          <IconLayoutDashboard size={24} />
+        </button>
+        <div className="chat-header-content">
+          <h1 className="chat-main-title">
+            Tracko
+          </h1>
+        </div>
+      </div>
+
       {/* Sidebar - Historial de chats */}
       <div className={`chat-sidebar-container ${sidebarOpen ? 'chat-sidebar-container--open' : ''} ${sidebarCollapsed ? 'chat-sidebar-container--collapsed' : ''}`}>
         <ChatSidebar
@@ -229,28 +252,6 @@ export const ChatPage: React.FC = () => {
 
       {/* Área principal del chat */}
       <div className="chat-main-area">
-        <div className="chat-header">
-          <button 
-            className="chat-menu-icon" 
-            onClick={toggleSidebar}
-            aria-label="Abrir historial"
-          >
-            <IconMenu2 size={24} />
-          </button>
-          <button 
-            className="chat-dashboard-icon" 
-            onClick={() => navigate('/dashboard')}
-            aria-label="Ir al Dashboard"
-          >
-            <IconLayoutDashboard size={24} />
-          </button>
-          <div className="chat-header-content">
-            <h1 className="chat-main-title">
-              Tracko
-            </h1>
-          </div>
-        </div>
-        
         <ChatWindow
           messages={messages}
           onSendMessage={handleSendMessage}
