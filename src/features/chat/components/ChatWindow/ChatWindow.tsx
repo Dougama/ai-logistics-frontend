@@ -5,9 +5,6 @@ import { Container } from "@mantine/core";
 import { IconArrowDown, IconMessage } from "@tabler/icons-react";
 import { MessageBubble } from "../MessageBubble";
 import { MessageInput } from "../MessageInput";
-import { useOptimizedScroll } from "../../hooks/useOptimizedScroll";
-import { useVirtualizedMessages } from "../../hooks/useVirtualizedMessages";
-import { useAutoScroll } from "../../hooks/useAutoScroll";
 import type { ChatMessage } from "../../types";
 
 interface ChatCategory {
@@ -37,115 +34,63 @@ export const ChatWindow: React.FC<ChatWindowProps> = memo(({
 }) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [isNearBottom, setIsNearBottom] = React.useState(true);
+  const [isUserScrolling, setIsUserScrolling] = React.useState(false);
+  const scrollTimeoutRef = useRef<NodeJS.Timeout>();
 
-  // Hook de auto-scroll inteligente
-  const {
-    scrollContainerRef,
-    bottomElementRef,
-    scrollToBottom,
-    scrollToBottomImmediate,
-    isNearBottom,
-    isUserScrolling,
-  } = useAutoScroll({
-    enabled: true,
-    delay: 100, // Reducir delay para respuesta más rápida
-    behavior: 'smooth',
-    threshold: 100, // Reducir threshold para activar más fácilmente
-    debug: true, // Habilitar debug temporalmente
-  });
+  // Función simplificada para scroll al final
+  const scrollToBottom = useCallback((force = false) => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
 
-  // Hook de virtualización para mensajes largos
-  const {
-    shouldVirtualize,
-    visibleItems,
-    totalHeight,
-    offsetY,
-    handleScroll,
-  } = useVirtualizedMessages(messages, {
-    estimatedItemHeight: 100,
-    overscan: 5,
-    containerHeight: 600,
-    virtualizationThreshold: 50,
-  });
-
-  // Auto-scroll cuando llegan nuevos mensajes
-  useEffect(() => {
-    if (messages.length === 0) return;
-
-    // Si es la primera carga, scroll inmediato
-    if (messages.length === 1) {
-      scrollToBottomImmediate();
-      return;
+    if (force || isNearBottom || !isUserScrolling) {
+      container.scrollTop = container.scrollHeight;
     }
+  }, [isNearBottom, isUserScrolling]);
 
-    // Si hay nuevos mensajes y el usuario está cerca del final, hacer scroll
-    if (isNearBottom || !isUserScrolling) {
-      scrollToBottom();
+  // Detectar posición del scroll
+  const handleScroll = useCallback(() => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    const { scrollTop, scrollHeight, clientHeight } = container;
+    const isAtBottom = scrollTop + clientHeight >= scrollHeight - 100;
+    setIsNearBottom(isAtBottom);
+
+    // Detectar si el usuario está scrolleando
+    setIsUserScrolling(true);
+    if (scrollTimeoutRef.current) {
+      clearTimeout(scrollTimeoutRef.current);
     }
-  }, [messages.length, isNearBottom, isUserScrolling, scrollToBottom, scrollToBottomImmediate]);
+    scrollTimeoutRef.current = setTimeout(() => {
+      setIsUserScrolling(false);
+    }, 1000);
+  }, []);
 
-  // Auto-scroll cuando aparece el indicador de escritura
+  // Auto-scroll cuando llegan nuevos mensajes o cuando está escribiendo
   useEffect(() => {
-    if (isReplying && (isNearBottom || !isUserScrolling)) {
-      scrollToBottom();
+    if (messages.length > 0 || isReplying) {
+      // Solo hacer auto-scroll si el usuario está cerca del final o no está scrolleando
+      if (isNearBottom || !isUserScrolling) {
+        setTimeout(() => scrollToBottom(), 100);
+      }
     }
-  }, [isReplying, isNearBottom, isUserScrolling, scrollToBottom]);
+  }, [messages.length, isReplying, scrollToBottom, isNearBottom, isUserScrolling]);
 
-  // Scroll inicial cuando se carga un chat existente
+  // Configurar listener de scroll
   useEffect(() => {
-    if (messages.length > 1) {
-      // Delay pequeño para asegurar que el DOM esté renderizado
-      setTimeout(() => {
-        scrollToBottomImmediate();
-      }, 100);
-    }
-  }, []); // Solo en mount inicial
+    const container = scrollContainerRef.current;
+    if (!container) return;
 
-  // Sincronizar scroll con virtualización
-  useEffect(() => {
-    const element = scrollContainerRef.current;
-    if (!element || !shouldVirtualize) return;
-
-    const handleScrollEvent = () => {
-      handleScroll(element.scrollTop);
+    container.addEventListener('scroll', handleScroll, { passive: true });
+    return () => {
+      container.removeEventListener('scroll', handleScroll);
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current);
+      }
     };
-
-    element.addEventListener('scroll', handleScrollEvent, { passive: true });
-    return () => element.removeEventListener('scroll', handleScrollEvent);
-  }, [shouldVirtualize, handleScroll, scrollContainerRef]);
-
-  // Auto-scroll directo y robusto cuando cambian los mensajes
-  useEffect(() => {
-    if (messages.length > 0) {
-      // Triple método para asegurar scroll completo
-      const scrollToEnd = () => {
-        if (messagesEndRef.current) {
-          const container = messagesEndRef.current.closest('.chat-window__messages') as HTMLElement;
-          if (container) {
-            // Método 1: Scroll directo al final + buffer
-            const maxScroll = container.scrollHeight - container.clientHeight;
-            container.scrollTop = maxScroll + 100; // Buffer extra para garantizar visibilidad
-            
-            console.log('🔥 SCROLL FORZADO:', {
-              scrollHeight: container.scrollHeight,
-              clientHeight: container.clientHeight,
-              maxScroll,
-              finalScrollTop: container.scrollTop,
-              buffer: 100
-            });
-          }
-        }
-      };
-
-      // Ejecutar múltiples veces para garantizar que funcione
-      requestAnimationFrame(() => {
-        scrollToEnd();
-        setTimeout(scrollToEnd, 50);
-        setTimeout(scrollToEnd, 200);
-        setTimeout(scrollToEnd, 500);
-      });
-    }
-  }, [messages.length]);
+  }, [handleScroll]);
 
   const handleSuggestionClick = useCallback((suggestion: string) => {
     const cleanSuggestion = suggestion.replace(/^[📦🚚📊🗺️💰⏰]\s/, "");
@@ -154,7 +99,6 @@ export const ChatWindow: React.FC<ChatWindowProps> = memo(({
 
   const handleMessageSend = useCallback((text: string) => {
     onSendMessage(text);
-    // Scroll forzado cuando el usuario envía un mensaje
     setTimeout(() => scrollToBottom(true), 100);
   }, [onSendMessage, scrollToBottom]);
 
@@ -166,16 +110,10 @@ export const ChatWindow: React.FC<ChatWindowProps> = memo(({
         <div 
           ref={scrollContainerRef}
           className="chat-window__messages"
-          style={{
-            height: shouldVirtualize ? totalHeight : undefined,
-          }}
         >
           <div 
             ref={messagesContainerRef}
             className="chat-messages-container"
-            style={{
-              transform: shouldVirtualize ? `translateY(${offsetY}px)` : undefined,
-            }}
           >
             {messages.length === 0 && !isReplying && showWelcome && (
               <div className="chat-window__empty">
@@ -210,21 +148,10 @@ export const ChatWindow: React.FC<ChatWindowProps> = memo(({
               </div>
             )}
 
-            {/* Mensajes - Renderizado normal o virtualizado */}
-            {shouldVirtualize ? (
-              // Renderizado virtualizado para listas largas
-              visibleItems.map((item) => (
-                <MessageBubble 
-                  key={item.message.id} 
-                  message={item.message}
-                />
-              ))
-            ) : (
-              // Renderizado normal para listas cortas
-              messages.map((msg) => (
-                <MessageBubble key={msg.id} message={msg} />
-              ))
-            )}
+            {/* Mensajes */}
+            {messages.map((msg) => (
+              <MessageBubble key={msg.id} message={msg} />
+            ))}
 
             {/* Indicador de escritura */}
             {isReplying && (
@@ -251,7 +178,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = memo(({
             <div ref={messagesEndRef} />
             
             {/* Espaciador adicional para asegurar que el último mensaje sea visible */}
-            <div ref={bottomElementRef} className="chat-messages-spacer" />
+            <div className="chat-messages-spacer" />
           </div>
         </div>
       </div>

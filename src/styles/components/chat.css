@@ -420,8 +420,7 @@
   /* Optimización de rendimiento */
   will-change: scroll-position;
   contain: size layout style;
-  /* Ajuste para input fijo */
-  height: calc(100vh - 48px); /* Altura completa menos header */
+  /* Usar flex para tomar el espacio disponible */
 }
 
 .chat-messages-container {
@@ -429,13 +428,14 @@
   max-width: 100%; /* Limita al ancho del contenedor padre */
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start; /* Permitir scroll desde el inicio */
   gap: var(--space-3);
   overflow-x: hidden; /* Evita scroll horizontal */
   overflow-y: visible; /* Asegurar que el contenido vertical sea visible */
-  padding: var(--space-4) var(--space-8) var(--message-input-total-height) var(--space-10); /* Padding agresivo izquierdo para listas */
+  padding: var(--space-4) var(--space-6) var(--message-input-total-height) var(--space-6); /* Padding más equilibrado */
   /* Asegurar que el último mensaje siempre tenga espacio suficiente */
   margin-bottom: 0;
+  min-height: max-content; /* Permitir que el contenedor se ajuste al contenido */
 }
 
 /* Espaciador al final de los mensajes para garantizar visibilidad completa */
@@ -560,14 +560,7 @@
   display: none; /* Ocultar descripción para hacer más compacto */
 }
 
-.chat-messages {
-  flex: 1;
-  overflow-y: auto;
-  padding: var(--space-4);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-}
+/* Legacy chat-messages class removed */
 
 /* Scroll personalizado para mensajes */
 .chat-window__messages::-webkit-scrollbar {
@@ -588,19 +581,7 @@
   background: var(--color-primary);
 }
 
-/* Scroll para chat messages legacy */
-.chat-messages::-webkit-scrollbar {
-  width: 6px;
-}
-
-.chat-messages::-webkit-scrollbar-track {
-  background: var(--color-background);
-}
-
-.chat-messages::-webkit-scrollbar-thumb {
-  background: var(--color-border);
-  border-radius: var(--radius-full);
-}
+/* Legacy chat-messages scrollbar styles removed */
 
 /* Message Bubbles */
 .message-bubble {
@@ -640,7 +621,7 @@
   padding: var(--space-4);
   border-radius: var(--radius-xl);
   display: inline-block; /* Para que se ajuste al contenido */
-  max-width: 100%; /* Máximo el ancho del contenedor */
+  max-width: 80%; /* Limitar a 80% para mejor legibilidad */
   font-weight: var(--font-bold); /* Negrita completa */
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   word-wrap: break-word; /* Salto de línea automático */
@@ -662,7 +643,7 @@
 .message-content--assistant {
   background: none;
   color: var(--color-text);
-  padding: var(--space-3) var(--space-4) var(--space-3) var(--space-12); /* Padding izquierdo MUY grande para listas */
+  padding: var(--space-3) var(--space-4) var(--space-3) var(--space-6); /* Padding izquierdo moderado */
   width: 100%;
   border: none;
   border-radius: 0;
@@ -689,7 +670,7 @@
 .message-content--assistant ul,
 .message-content--assistant ol {
   margin: var(--space-2) 0;
-  padding-left: var(--space-10); /* Espacio EXTRA para viñetas/números */
+  padding-left: var(--space-6); /* Espacio razonable para viñetas/números */
   list-style-position: outside; /* Viñetas fuera del contenido */
 }
 
@@ -724,31 +705,7 @@
   list-style-type: square; /* Viñetas cuadradas para tercer nivel */
 }
 
-/* Legacy styles for compatibility */
-.message-user {
-  align-self: flex-end;
-  background-color: var(--color-primary);
-  color: var(--color-surface);
-  max-width: 80%;
-  padding: var(--space-4);
-  border-radius: var(--radius-xl);
-  border-bottom-right-radius: var(--radius-base);
-  word-wrap: break-word;
-  animation: slideUp 0.3s ease;
-}
-
-.message-assistant {
-  align-self: flex-start;
-  background-color: var(--color-surface);
-  color: var(--color-text);
-  border: 1px solid var(--color-border-light);
-  max-width: 80%;
-  padding: var(--space-4);
-  border-radius: var(--radius-xl);
-  border-bottom-left-radius: var(--radius-base);
-  word-wrap: break-word;
-  animation: slideUp 0.3s ease;
-}
+/* Legacy styles removed - using new MessageBubble component */
 
 .message-timestamp {
   font-size: var(--text-xs);
@@ -1239,6 +1196,67 @@
   .sidebar-header-container {
     justify-content: center !important; /* Centrar en móvil */
   }
+
+  /* Mostrar botón de menú en móvil */
+  .chat-menu-icon {
+    display: flex;
+  }
+
+  .chat-grid {
+    grid-template-columns: 1fr;
+    grid-template-rows: repeat(6, 1fr);
+    height: auto;
+    min-height: calc(100vh - 160px);
+  }
+
+  .chat-window__messages {
+    padding: 0; /* Sin padding en el scroll container */
+  }
+
+  .chat-messages-container {
+    padding: var(--space-3) var(--space-3) var(--message-input-mobile-height) var(--space-3); /* Padding bottom calculado para móvil */
+  }
+
+  .chat-messages-spacer {
+    height: var(--message-input-mobile-height);
+    min-height: 72px; /* Reducido 40%: 120px -> 72px */
+  }
+
+  .message-input-fixed {
+    padding: var(--space-3);
+  }
+
+  .message-input-fixed__field {
+    min-height: 82.8px; /* 72px * 1.15 = 82.8px */
+    padding: var(--space-3) var(--space-4);
+  }
+
+  .message-input-fixed__button {
+    min-width: 48px;
+    height: 48px;
+  }
+
+  .message-content--user {
+    max-width: 90%; /* Ajustar para móvil */
+    font-size: var(--text-sm);
+    padding: var(--space-3);
+  }
+
+  .message-content--assistant {
+    font-size: var(--text-sm);
+    padding: var(--space-2) 0;
+  }
+
+  .chat-actions-grid {
+    grid-template-columns: repeat(2, 1fr); /* 2 columnas en móvil */
+    grid-template-rows: repeat(3, 1fr); /* 3 filas en móvil */
+    gap: var(--space-2);
+  }
+
+  .chat-action-card {
+    min-height: 50px;
+    padding: var(--space-1);
+  }
 }
 
 .chat-sidebar-overlay {
@@ -1251,66 +1269,7 @@
   z-index: 5; /* Debajo del sidebar y del header */
 }
 
-/* Mostrar botón de menú en móvil */
-.chat-menu-icon {
-  display: flex;
-}
-
-.chat-grid {
-  grid-template-columns: 1fr;
-  grid-template-rows: repeat(6, 1fr);
-  height: auto;
-  min-height: calc(100vh - 160px);
-}
-
-.chat-window__messages {
-  padding: 0; /* Sin padding en el scroll container */
-}
-
-.chat-messages-container {
-  padding: var(--space-3) var(--space-3) var(--message-input-mobile-height) var(--space-3); /* Padding bottom calculado para móvil */
-}
-
-.chat-messages-spacer {
-  height: var(--message-input-mobile-height);
-  min-height: 72px; /* Reducido 40%: 120px -> 72px */
-}
-
-.message-input-fixed {
-  padding: var(--space-3);
-}
-
-.message-input-fixed__field {
-  min-height: 82.8px; /* 72px * 1.15 = 82.8px */
-  padding: var(--space-3) var(--space-4);
-}
-
-.message-input-fixed__button {
-  min-width: 48px;
-  height: 48px;
-}
-
-.message-content--user {
-  max-width: 100%; /* Máximo el ancho en móvil */
-  font-size: var(--text-sm);
-  padding: var(--space-3);
-}
-
-.message-content--assistant {
-  font-size: var(--text-sm);
-  padding: var(--space-2) 0;
-}
-
-.chat-actions-grid {
-  grid-template-columns: repeat(2, 1fr); /* 2 columnas en móvil */
-  grid-template-rows: repeat(3, 1fr); /* 3 filas en móvil */
-  gap: var(--space-2);
-}
-
-.chat-action-card {
-  min-height: 50px;
-  padding: var(--space-1);
-}
+/* Reglas globales removidas - movidas a media queries apropiadas */
 
 /* Tablet responsiveness */
 @media (max-width: 1024px) and (min-width: 768px) {
@@ -1321,7 +1280,7 @@
   }
 
   .message-content--user {
-    max-width: 100%; /* Máximo el ancho en tablet */
+    max-width: 85%; /* Ajustar para tablet */
   }
 
   .chat-action-card {
@@ -1332,7 +1291,7 @@
 /* Desktop responsiveness */
 @media (min-width: 1025px) {
   .message-content--user {
-    max-width: 100%; /* Máximo el ancho en desktop también */
+    max-width: 80%; /* Mantener consistencia con diseño base */
     font-size: calc(var(--text-sm) * 1.2);
   }
 
