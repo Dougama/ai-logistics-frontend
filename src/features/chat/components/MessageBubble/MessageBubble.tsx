@@ -4,6 +4,7 @@ import React, { memo } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import type { ChatMessage } from "../../types";
+import { KPICarousel } from "../KPICarousel";
 
 interface MessageBubbleProps {
   message: ChatMessage;
@@ -11,6 +12,9 @@ interface MessageBubbleProps {
 
 export const MessageBubble: React.FC<MessageBubbleProps> = memo(({ message }) => {
   const isUser = message.role === "user";
+  const hasCompensationData = message.data?.compensationData && 
+    message.data.compensationData.compensationList && 
+    message.data.compensationData.compensationList.length > 0;
 
   return (
     <div
@@ -83,6 +87,11 @@ export const MessageBubble: React.FC<MessageBubbleProps> = memo(({ message }) =>
         >
           {message.content}
         </ReactMarkdown>
+        
+        {/* Renderizar KPICarousel si hay datos de compensación */}
+        {hasCompensationData && !isUser && (
+          <KPICarousel data={message.data!.compensationData!} />
+        )}
       </div>
     </div>
   );

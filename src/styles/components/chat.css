@@ -407,6 +407,9 @@
   background-color: rgba(255, 255, 255, 0.3); /* Fondo sutil más claro */
   border-radius: 0; /* Sin borde redondeado para aprovechar toda la pantalla */
   margin: 0; /* Sin margen */
+  touch-action: pan-y;
+  overscroll-behavior-y: contain;
+  -webkit-overflow-scrolling: touch;
   width: 100%; /* Todo el ancho */
   /* Optimización de scroll para móviles */
   -webkit-overflow-scrolling: touch;

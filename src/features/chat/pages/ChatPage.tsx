@@ -67,11 +67,13 @@ export const ChatPage: React.FC = () => {
 
         console.log("📥 Respuesta del servidor:", response);
 
+        // Crear mensaje del asistente con datos adicionales si están presentes
         const assistantMessage: ChatMessage = {
           id: response.id,
           role: "assistant",
           content: response.content,
           timestamp: new Date(response.timestamp),
+          data: response.data || undefined, // Incluir datos adicionales si vienen del backend
         };
 
         setMessages((prev) => [...prev, assistantMessage]);
@@ -196,6 +198,55 @@ export const ChatPage: React.FC = () => {
     setSidebarOpen(false); // Cerrar sidebar en móvil
   }, []);
 
+  // TEMPORAL: Función para probar el KPICarousel
+  const handleTestKPI = useCallback(() => {
+    const testMessage: ChatMessage = {
+      id: `test_${Date.now()}`,
+      role: "assistant",
+      content: "He consultado la información completa para MACHADO ROJAS ELKIN OMAR (cédula 1064786659) para julio 2025.\n\nCompensación Variable:\n- Variable diaria: $3,557.69 COP\n- Meta mensual: $92,500 COP\n- KPI Entrega en Rango: 100% (Meta: 90%) ✅\n- KPI Adherencia KM: 86.14% (Meta: 92%) ⚠️\n- KPI Rechazos: 0.34% (Meta: máx 2.7%) ✅",
+      timestamp: new Date(),
+      data: {
+        compensationData: {
+          compensationList: [
+            {
+              id: "1064786659/fecha/2025-07-02",
+              kpi_recargues: 86.14,
+              cedula: "1064786659",
+              kpi_refusal: 0.34,
+              nombre: "MACHADO ROJAS ELKIN OMAR",
+              fecha: "2025-07-02",
+              kpi_entrega_en_rango: 100,
+              variable: 3557.69,
+              variableMes: 92500
+            },
+            {
+              id: "1064786659/fecha/2025-07-03",
+              kpi_recargues: 89.5,
+              cedula: "1064786659",
+              kpi_refusal: 0.12,
+              nombre: "MACHADO ROJAS ELKIN OMAR",
+              fecha: "2025-07-03",
+              kpi_entrega_en_rango: 95,
+              variable: 3557.69,
+              variableMes: 92500
+            }
+          ],
+          parameters: {
+            entrega_en_rango_w: 0.4,
+            kpi_refusal_goal: 2.7,
+            recargues_w: 0.3,
+            refusal_w: 0.3,
+            kpi_entrega_en_rango_goal: 90,
+            kpi_recargues_goal: 92
+          },
+          total_registros: 2
+        }
+      }
+    };
+    
+    setMessages(prev => [...prev, testMessage]);
+  }, []);
+
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
@@ -222,6 +273,27 @@ export const ChatPage: React.FC = () => {
           aria-label="Ir al Dashboard"
         >
           <IconLayoutDashboard size={24} />
+        </button>
+        {/* TEMPORAL: Botón para probar KPICarousel */}
+        <button 
+          className="chat-test-kpi-button" 
+          onClick={handleTestKPI}
+          aria-label="Test KPI"
+          style={{
+            position: 'absolute',
+            right: '60px',
+            top: '50%',
+            transform: 'translateY(-50%)',
+            background: '#4CAF50',
+            color: 'white',
+            border: 'none',
+            borderRadius: '6px',
+            padding: '4px 8px',
+            fontSize: '10px',
+            cursor: 'pointer'
+          }}
+        >
+          KPI
         </button>
         <div className="chat-header-content">
           <h1 className="chat-main-title">

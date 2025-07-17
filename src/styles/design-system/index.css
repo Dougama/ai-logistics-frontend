@@ -10,6 +10,9 @@
 @import './base.css';
 @import './components.css';
 
+/* Component Styles */
+@import '../components/kpi-carousel.css';
+
 /* App-wide utility classes */
 .app-container {
   min-height: 100vh;
