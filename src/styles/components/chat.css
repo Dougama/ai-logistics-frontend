@@ -430,7 +430,7 @@
   gap: var(--space-3);
   overflow-x: hidden; /* Evita scroll horizontal */
   overflow-y: visible; /* Asegurar que el contenido vertical sea visible */
-  padding: var(--space-4) var(--space-6) var(--message-input-total-height) var(--space-6); /* Padding completo: top, lateral, bottom para input */
+  padding: var(--space-4) var(--space-8) var(--message-input-total-height) var(--space-10); /* Padding agresivo izquierdo para listas */
   /* Asegurar que el último mensaje siempre tenga espacio suficiente */
   margin-bottom: 0;
 }
@@ -441,6 +441,41 @@
   min-height: 90px; /* Reducido 40%: 150px -> 90px */
   flex-shrink: 0;
   width: 100%;
+}
+
+/* Indicador de auto-scroll */
+.auto-scroll-indicator {
+  position: fixed;
+  bottom: calc(var(--message-input-total-height) + 20px);
+  right: 20px;
+  background-color: var(--color-primary);
+  color: white;
+  padding: 8px 12px;
+  border-radius: var(--radius-full);
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transform: translateY(100px);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.auto-scroll-indicator--visible {
+  transform: translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.auto-scroll-indicator:hover {
+  background-color: var(--color-primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
 }
 
 .chat-window__empty {
@@ -624,7 +659,7 @@
 .message-content--assistant {
   background: none;
   color: var(--color-text);
-  padding: var(--space-3) 0;
+  padding: var(--space-3) var(--space-4) var(--space-3) var(--space-12); /* Padding izquierdo MUY grande para listas */
   width: 100%;
   border: none;
   border-radius: 0;
@@ -645,6 +680,45 @@
   box-sizing: border-box;
   margin: 0;
   overflow: visible;
+}
+
+/* Estilos específicos para listas - Asegurar visibilidad de viñetas y numeración */
+.message-content--assistant ul,
+.message-content--assistant ol {
+  margin: var(--space-2) 0;
+  padding-left: var(--space-10); /* Espacio EXTRA para viñetas/números */
+  list-style-position: outside; /* Viñetas fuera del contenido */
+}
+
+.message-content--assistant ul {
+  list-style-type: disc; /* Viñetas circulares */
+}
+
+.message-content--assistant ol {
+  list-style-type: decimal; /* Numeración decimal */
+}
+
+.message-content--assistant li {
+  margin: var(--space-1) 0;
+  padding-left: var(--space-1); /* Pequeño espaciado interno */
+  line-height: var(--leading-relaxed);
+}
+
+/* Sublistas */
+.message-content--assistant ul ul,
+.message-content--assistant ol ol,
+.message-content--assistant ul ol,
+.message-content--assistant ol ul {
+  margin: var(--space-1) 0;
+  padding-left: var(--space-4); /* Menos indentación para sublistas */
+}
+
+.message-content--assistant ul ul {
+  list-style-type: circle; /* Viñetas circulares vacías para sublistas */
+}
+
+.message-content--assistant ul ul ul {
+  list-style-type: square; /* Viñetas cuadradas para tercer nivel */
 }
 
 /* Legacy styles for compatibility */

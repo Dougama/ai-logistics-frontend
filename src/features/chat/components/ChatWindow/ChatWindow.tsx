@@ -2,10 +2,12 @@
 
 import React, { useRef, useEffect, memo, useCallback } from "react";
 import { Container } from "@mantine/core";
+import { IconArrowDown, IconMessage } from "@tabler/icons-react";
 import { MessageBubble } from "../MessageBubble";
 import { MessageInput } from "../MessageInput";
 import { useOptimizedScroll } from "../../hooks/useOptimizedScroll";
 import { useVirtualizedMessages } from "../../hooks/useVirtualizedMessages";
+import { useAutoScroll } from "../../hooks/useAutoScroll";
 import type { ChatMessage } from "../../types";
 
 interface ChatCategory {
@@ -36,10 +38,20 @@ export const ChatWindow: React.FC<ChatWindowProps> = memo(({
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
 
-  // Hook de scroll optimizado
-  const { scrollRef, scrollToBottom, isAtBottom } = useOptimizedScroll({
-    smoothScroll: true,
-    debounceTime: 100,
+  // Hook de auto-scroll inteligente
+  const {
+    scrollContainerRef,
+    bottomElementRef,
+    scrollToBottom,
+    scrollToBottomImmediate,
+    isNearBottom,
+    isUserScrolling,
+  } = useAutoScroll({
+    enabled: true,
+    delay: 100, // Reducir delay para respuesta más rápida
+    behavior: 'smooth',
+    threshold: 100, // Reducir threshold para activar más fácilmente
+    debug: true, // Habilitar debug temporalmente
   });
 
   // Hook de virtualización para mensajes largos
@@ -58,20 +70,40 @@ export const ChatWindow: React.FC<ChatWindowProps> = memo(({
 
   // Auto-scroll cuando llegan nuevos mensajes
   useEffect(() => {
-    if (messages.length > 0) {
-      // Solo auto-scroll si el usuario está cerca del final
-      if (isAtBottom() || messages.length === 1) {
-        // Usar RAF para mejor rendimiento
-        requestAnimationFrame(() => {
-          scrollToBottom();
-        });
-      }
+    if (messages.length === 0) return;
+
+    // Si es la primera carga, scroll inmediato
+    if (messages.length === 1) {
+      scrollToBottomImmediate();
+      return;
     }
-  }, [messages, isAtBottom, scrollToBottom]);
+
+    // Si hay nuevos mensajes y el usuario está cerca del final, hacer scroll
+    if (isNearBottom || !isUserScrolling) {
+      scrollToBottom();
+    }
+  }, [messages.length, isNearBottom, isUserScrolling, scrollToBottom, scrollToBottomImmediate]);
+
+  // Auto-scroll cuando aparece el indicador de escritura
+  useEffect(() => {
+    if (isReplying && (isNearBottom || !isUserScrolling)) {
+      scrollToBottom();
+    }
+  }, [isReplying, isNearBottom, isUserScrolling, scrollToBottom]);
+
+  // Scroll inicial cuando se carga un chat existente
+  useEffect(() => {
+    if (messages.length > 1) {
+      // Delay pequeño para asegurar que el DOM esté renderizado
+      setTimeout(() => {
+        scrollToBottomImmediate();
+      }, 100);
+    }
+  }, []); // Solo en mount inicial
 
   // Sincronizar scroll con virtualización
   useEffect(() => {
-    const element = scrollRef.current;
+    const element = scrollContainerRef.current;
     if (!element || !shouldVirtualize) return;
 
     const handleScrollEvent = () => {
@@ -80,12 +112,51 @@ export const ChatWindow: React.FC<ChatWindowProps> = memo(({
 
     element.addEventListener('scroll', handleScrollEvent, { passive: true });
     return () => element.removeEventListener('scroll', handleScrollEvent);
-  }, [shouldVirtualize, handleScroll, scrollRef]);
+  }, [shouldVirtualize, handleScroll, scrollContainerRef]);
+
+  // Auto-scroll directo y robusto cuando cambian los mensajes
+  useEffect(() => {
+    if (messages.length > 0) {
+      // Triple método para asegurar scroll completo
+      const scrollToEnd = () => {
+        if (messagesEndRef.current) {
+          const container = messagesEndRef.current.closest('.chat-window__messages') as HTMLElement;
+          if (container) {
+            // Método 1: Scroll directo al final + buffer
+            const maxScroll = container.scrollHeight - container.clientHeight;
+            container.scrollTop = maxScroll + 100; // Buffer extra para garantizar visibilidad
+            
+            console.log('🔥 SCROLL FORZADO:', {
+              scrollHeight: container.scrollHeight,
+              clientHeight: container.clientHeight,
+              maxScroll,
+              finalScrollTop: container.scrollTop,
+              buffer: 100
+            });
+          }
+        }
+      };
+
+      // Ejecutar múltiples veces para garantizar que funcione
+      requestAnimationFrame(() => {
+        scrollToEnd();
+        setTimeout(scrollToEnd, 50);
+        setTimeout(scrollToEnd, 200);
+        setTimeout(scrollToEnd, 500);
+      });
+    }
+  }, [messages.length]);
 
   const handleSuggestionClick = useCallback((suggestion: string) => {
     const cleanSuggestion = suggestion.replace(/^[📦🚚📊🗺️💰⏰]\s/, "");
     onSendMessage(cleanSuggestion);
   }, [onSendMessage]);
+
+  const handleMessageSend = useCallback((text: string) => {
+    onSendMessage(text);
+    // Scroll forzado cuando el usuario envía un mensaje
+    setTimeout(() => scrollToBottom(true), 100);
+  }, [onSendMessage, scrollToBottom]);
 
 
   return (
@@ -93,7 +164,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = memo(({
       <div className="chat-window">
         {/* Área de mensajes con scroll optimizado */}
         <div 
-          ref={scrollRef}
+          ref={scrollContainerRef}
           className="chat-window__messages"
           style={{
             height: shouldVirtualize ? totalHeight : undefined,
@@ -180,13 +251,24 @@ export const ChatWindow: React.FC<ChatWindowProps> = memo(({
             <div ref={messagesEndRef} />
             
             {/* Espaciador adicional para asegurar que el último mensaje sea visible */}
-            <div className="chat-messages-spacer" />
+            <div ref={bottomElementRef} className="chat-messages-spacer" />
           </div>
         </div>
       </div>
 
+      {/* Botón de scroll al final (aparece cuando el usuario no está cerca del final) */}
+      {!isNearBottom && messages.length > 0 && (
+        <div 
+          className={`auto-scroll-indicator auto-scroll-indicator--visible`}
+          onClick={() => scrollToBottom(true)}
+        >
+          <IconArrowDown size={16} />
+          <span>Ir al final</span>
+        </div>
+      )}
+
       {/* Input de mensajes fuera del chat-window */}
-      <MessageInput onSendMessage={onSendMessage} isLoading={isReplying} />
+      <MessageInput onSendMessage={handleMessageSend} isLoading={isReplying} />
     </>
   );
 });
