@@ -10,7 +10,7 @@ import "@mantine/core/styles.css";
 const minimalTheme = {
   primaryColor: 'blue',
   colors: {
-    blue: ['#F2F2F3', '#C1A774', '#B4895B', '#464E59', '#091626', '#091626', '#091626', '#091626', '#091626', '#091626'],
+    blue: ['#F2F2F3', '#C1A774', '#B4895B', '#464E59', '#091626', '#091626', '#091626', '#091626', '#091626', '#091626'] as const,
   },
   defaultRadius: 'md',
   fontFamily: 'Inter, sans-serif',

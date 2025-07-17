@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { TextInput, PasswordInput, Button, Stack, Alert } from "@mantine/core";
 import { IconAlertCircle } from "@tabler/icons-react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../../../../shared/services/auth/firebase";
+import { getFirebaseAuth } from "../../../../shared/services/auth/firebase";
 
 interface RegisterFormProps {
   onToggleMode: () => void;
@@ -27,6 +27,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onToggleMode }) => {
     setLoading(true);
 
     try {
+      const auth = await getFirebaseAuth();
       await createUserWithEmailAndPassword(auth, email, password);
     } catch (err: any) {
       setError(err.message);
